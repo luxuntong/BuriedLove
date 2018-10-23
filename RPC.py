@@ -1,4 +1,5 @@
 from singleton import singleton
+from mqtt import MQTT
 
 
 @singleton
@@ -13,3 +14,6 @@ class RPC(object):
 
     def test(self, jsonData):
         print(jsonData)
+
+    def genHtml(self, jsonData):
+        MQTT().generateHtml()

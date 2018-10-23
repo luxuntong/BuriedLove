@@ -2,7 +2,6 @@
 import paho.mqtt.client as mqtt
 from mqtt import MQTT
 import time
-import json
 
 HOST = "iotdevrd.chinacloudapp.cn"
 PORT = 1889
@@ -25,8 +24,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     print(msg.topic + " " + msg.payload.decode("utf-8"))
-    jsonData = json.loads(msg.payload.decode("utf-8"))
-    MQTT().setInfo(jsonData)
+    MQTT().setInfo(msg.payload.decode("utf-8"))
 
 
 if __name__ == '__main__':
