@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+    body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=7c6b27c580c457a4e46f21502b594bd7"></script>
+    <title>折线上添加方向箭头</title>
+</head>
+<body>
+    <div id="allmap"></div>
+</body>
+</html>
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("allmap");    // 创建Map实例
+    map.centerAndZoom(new BMap.Point(120.19181333333334, 30.189140833333337), 16);  // 初始化地图,设置中心点坐标和地图级别
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+  var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
+    scale: 0.6,//图标缩放大小
+    strokeColor:'#fff',//设置矢量图标的线填充颜色
+    strokeWeight: '2',//设置线宽
+});
+var icons = new BMap.IconSequence(sy, '10', '30');
+// 创建polyline对象
+var pois = [
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19197000000001,30.18805166666667),
+	new BMap.Point(120.19193333333332,30.188033333333337),
+	new BMap.Point(120.191955,30.188085),
+	new BMap.Point(120.19197000000001,30.188206666666662),
+	new BMap.Point(120.19193500000002,30.188346666666668),
+	new BMap.Point(120.19192,30.18847166666667),
+	new BMap.Point(120.19192,30.188556666666667),
+	new BMap.Point(120.19190666666667,30.188685000000003),
+	new BMap.Point(120.19188833333334,30.1888),
+	new BMap.Point(120.19187833333332,30.188910000000003),
+	new BMap.Point(120.19186666666668,30.18905333333333),
+	new BMap.Point(120.19185166666666,30.189148333333332),
+	new BMap.Point(120.19180833333333,30.189375000000002),
+	new BMap.Point(120.19178833333332,30.189453333333336),
+	new BMap.Point(120.19176999999999,30.189574999999998),
+	new BMap.Point(120.19178500000001,30.189655000000002),
+	new BMap.Point(120.19178166666667,30.189781666666665),
+	new BMap.Point(120.19176999999999,30.189865),
+	new BMap.Point(120.19175666666666,30.189931666666666),
+	new BMap.Point(120.19173333333335,30.190026666666668),
+	new BMap.Point(120.19168999999998,30.190144999999998),
+	new BMap.Point(120.19166333333332,30.190218333333338),
+	new BMap.Point(120.19165833333334,30.190244999999997),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336),
+	new BMap.Point(120.19165666666667,30.190248333333336)
+];
+var polyline =new BMap.Polyline(pois, {
+   enableEditing: false,//是否启用线编辑，默认为false
+   enableClicking: true,//是否响应点击事件，默认为true
+   icons:[icons],
+   strokeWeight:'8',//折线的宽度，以像素为单位
+   strokeOpacity: 0.8,//折线的透明度，取值范围0 - 1
+   strokeColor:"#18a45b" //折线颜色
+});
+
+map.addOverlay(polyline);          //增加折线
+  
+  
+</script>

@@ -79,7 +79,7 @@ class GPSPool(list):
             gps.longitude, gps.latitude) for gps in points]
         return ',\n\t'.join(points)
 
-    def generateHtml(self):
+    def generateHtml2(self):
         self.getEdgeValue()
         with open(self.readFile) as fr:
             fw = open(self.devId + '.html', 'w')
@@ -90,6 +90,16 @@ class GPSPool(list):
 
                 fw.write(line)
 
+    def generateHtml(self):
+        self.getEdgeValue()
+        with open(self.readFile, encoding='UTF-8') as fr:
+            fw = open(self.devId + '.html', 'w')
+            data = fr.read()
+            for rep, func in self.repList:
+                data = data.replace(rep, func(self))
+                
+            fw.write(data)
+            
 
 @singleton
 class MQTT(object):
