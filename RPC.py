@@ -1,5 +1,6 @@
 from singleton import singleton
 from mqtt import MQTT
+from mqClient import py
 
 
 @singleton
@@ -17,3 +18,6 @@ class RPC(object):
 
     def genHtml(self, jsonData):
         MQTT().generateHtml()
+
+    def switchToNextTopic(self, jsonData):
+        py.Mosquito().command_switch()
