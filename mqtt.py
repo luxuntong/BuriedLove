@@ -108,7 +108,7 @@ class MQTT(object):
         self.GPSPools = {}
 
     def getDevId(self, jsonStr):
-        pat = re.compile(r'"devId":"(\w+)"')
+        pat = re.compile(r'"devId":.*"(\w+)"')
         find = pat.search(jsonStr)
         return find.group(1)
 
