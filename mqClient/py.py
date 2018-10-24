@@ -42,7 +42,7 @@ class Mosquito(object) :
         self._client.on_message = self.on_message
         self._client.connect(HOST, PORT, 60)
         self._db = dataset.connect('sqlite:///gps.db')
-        self._table = self._db[self._get_current_topic()]
+
         self._set = set()
         self._last_size = 0
 

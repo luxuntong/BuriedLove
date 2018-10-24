@@ -3,10 +3,15 @@ import asyncio
 import threading
 from mqClient import py
 from RPC import RPC
+import dataset
+from mqtt import MQTT
+import json
 
 from aiohttp import web
 from aiohttp import web_runner
 
+
+DBNAME = 'sqlite:///gps.db'
 
 async def init(loop):
     app = web.Application(loop=loop)
@@ -32,8 +37,13 @@ def start():
 
 
 if __name__ == '__main__':
-    mos = py.Mosquito()
+    # mos = py.Mosquito()
     # t = threading.Thread(target=mos.client_loop, args=('hh',))
     # t.start()
-    mos.client_loop()
+    # mos.client_loop()
+    db = dataset.connect(DBNAME)
+    for gpsDict in db['GPSLocation/test1/1'].all():
+        gpsStr = json.dumps(gpsDict)
+        print(type(gpsStr), gpsStr)
+        MQTT().setInfo(gpsStr)
     start()
