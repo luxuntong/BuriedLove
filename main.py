@@ -37,13 +37,15 @@ def start():
 
 
 if __name__ == '__main__':
-    # mos = py.Mosquito()
-    # t = threading.Thread(target=mos.client_loop, args=('hh',))
-    # t.start()
-    # mos.client_loop()
+    mos = py.Mosquito()
+    t = threading.Thread(target=mos.client_loop, args=('hh',))
+    t.start()
+    mos.client_loop()
+    start()
+'''
     db = dataset.connect(DBNAME)
     for gpsDict in db['GPSLocation/test1/1'].all():
         gpsStr = json.dumps(gpsDict)
         print(type(gpsStr), gpsStr)
         MQTT().setInfo(gpsStr)
-    start()
+'''

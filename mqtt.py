@@ -50,14 +50,15 @@ class GPSPool(list):
         self.maxLatitude = 0
         self.maxLongitude = 0
 
-    def addData(self, data):
+    def addData(self, data, isWrite=True):
         gps = GPS(data)
         if gps.key in self.keys:
             return
 
         self.keys.add(gps.key)
         heapq.heappush(self, gps)
-        Data().addData(gps.data)
+        if isWrite:
+            Data().addData(gps.data)
 
     # 返回按照时间戳排序的gps信息队列
     def getSortData(self):
@@ -117,8 +118,9 @@ class MQTT(object):
             jsonStr = data['data']
             if not jsonStr:
                 continue 
+            print(jsonStr)
         
-            self.setInfo(jsonStr)
+            self.setInfo(jsonStr, False)
 
     def getDevId(self, jsonStr):
         pat = re.compile(r'"devId":\s?"(\w+)"')
@@ -131,10 +133,10 @@ class MQTT(object):
             jsonStr = data['data']
             self.setInfo(jsonStr)            
 
-    def setInfo(self, jsonStr):
+    def setInfo(self, jsonStr, isWrite=True):
         devId = self.getDevId(jsonStr)
         self.GPSPools.setdefault(devId, GPSPool(devId))
-        self.GPSPools[devId].addData(jsonStr)
+        self.GPSPools[devId].addData(jsonStr, isWrite)
 
     def generateHtml(self):
         for pool in self.GPSPools.values():
