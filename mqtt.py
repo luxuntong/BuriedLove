@@ -3,6 +3,7 @@ import time
 import json
 import heapq
 import re
+from data import Data
 from singleton import singleton
 
 
@@ -21,6 +22,7 @@ class GPS(object):
         self.altitude = jsonData['altitude']
         self.speed = jsonData['speed']
         self.direction = jsonData['direction']
+        self.data = jsonStr
 
     def __lt__(self, other):
         return self.timestamp < other.timestamp
@@ -55,6 +57,7 @@ class GPSPool(list):
 
         self.keys.add(gps.key)
         heapq.heappush(self, gps)
+        Data().addData(gps.data)
 
     # 返回按照时间戳排序的gps信息队列
     def getSortData(self):
@@ -106,11 +109,27 @@ class MQTT(object):
     def __init__(self, *args, **kwargs):
         self.first = True
         self.GPSPools = {}
+        self._initData()
+        
+    def _initData(self):
+        jsons = Data().getDatas()
+        for data in Data().getDatas():
+            jsonStr = data['data']
+            if not jsonStr:
+                continue 
+        
+            self.setInfo(jsonStr)
 
     def getDevId(self, jsonStr):
         pat = re.compile(r'"devId":"(\w+)"')
         find = pat.search(jsonStr)
         return find.group(1)
+    
+    def setAllData(self, jsons):
+        for data in jsons:
+            print('get json:', data)
+            jsonStr = data['data']
+            self.setInfo(jsonStr)            
 
     def setInfo(self, jsonStr):
         devId = self.getDevId(jsonStr)
