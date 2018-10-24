@@ -17,6 +17,7 @@ def singleton(cls, *args, **kw):
         return instances[cls]
     return _singleton
 
+g_mqtt = MQTT()
 
 @singleton
 class Mosquito(object) :
@@ -55,8 +56,8 @@ class Mosquito(object) :
     def on_message(self, client, userdata, msg):
         jData = msg.payload.decode('utf-8')
         print(msg.topic + " " + jData)
-        self.save_to_sqlite(jData)
-        # MQTT().setInfo(jData)
+        #self.save_to_sqlite(jData)
+        g_mqtt.setInfo(jData)
 
     def _get_current_topic(self):
         return self._topic[self._current_topic_index % len(self._topic)]

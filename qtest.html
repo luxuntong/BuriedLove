@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <script type="text/javascript" src="qwebchannel.js"></script>
+    <title>QWebChannel测试</title>
+    <script>
+        window.onload = function () {
+            new QWebChannel(qt.webChannelTransport, function (channel) {
+                window.pyjs = channel.objects.pyjs;
+                pyjs.myHello(alert);
+            });
+        }
+    </script>
+</head>
+<body>
+<div id="test">
+    this is test !
+</div>
+<div onclick="qt5test();">测试</div>
+
+<script>
+    function qt5test() {
+       pyjs.myTest('这是测试传参的',function (res) {
+            alert(res);
+        });
+    }
+    function uptext(msg) {
+        document.getElementById('test').innerHTML=msg;
+    }
+</script>
+</body>
+</html>
