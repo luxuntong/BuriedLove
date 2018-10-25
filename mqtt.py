@@ -101,9 +101,9 @@ class GPSPool(list):
             data = fr.read()
             for rep, func in self.repList:
                 data = data.replace(rep, func(self))
-                
+
             fw.write(data)
-            
+
 
 @singleton
 class MQTT(object):
@@ -111,27 +111,31 @@ class MQTT(object):
         self.first = True
         self.GPSPools = {}
         self._initData()
-        
+        self._browser = None
+
+    def setBrowser(self, browser):
+        self._browser = browser
+
     def _initData(self):
         jsons = Data().getDatas()
         for data in Data().getDatas():
             jsonStr = data['data']
             if not jsonStr:
-                continue 
+                continue
             print(jsonStr)
-        
+
             self.setInfo(jsonStr, False)
 
     def getDevId(self, jsonStr):
         pat = re.compile(r'"devId":\s?"(\w+)"')
         find = pat.search(jsonStr)
         return find.group(1)
-    
+
     def setAllData(self, jsons):
         for data in jsons:
             print('get json:', data)
             jsonStr = data['data']
-            self.setInfo(jsonStr)            
+            self.setInfo(jsonStr)
 
     def setInfo(self, jsonStr, isWrite=True):
         devId = self.getDevId(jsonStr)

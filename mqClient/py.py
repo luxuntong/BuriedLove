@@ -4,36 +4,28 @@ from mqtt import MQTT
 import time
 import json
 import dataset
+import CONST
 
 HOST = "iotdevrd.chinacloudapp.cn"
 PORT = 1889
 
+
 def singleton(cls, *args, **kw):
     instances = {}
 
-    def _singleton():
+    def _singleton(*argss):
         if cls not in instances:
-            instances[cls] = cls(*args, **kw)
+            instances[cls] = cls(*argss, **kw)
         return instances[cls]
     return _singleton
 
+
 g_mqtt = MQTT()
 
+
 @singleton
-class Mosquito(object) :
-    def __init__(self):
-        self._topic = ['GPSLocation/test1/1',
-                       'GPSLocation/test1/2',
-                       'GPSLocation/test2/1',
-                       'GPSLocation/test2/2',
-                       'GPSLocation/test3/1',
-                       'GPSLocation/test3/2',
-                       'GPSLocation/test4/1',
-                       'GPSLocation/test4/2',
-                       'GPSLocation/test5/1',
-                       'GPSLocation/test5/2',
-                       'GPSLocation/test6/1',
-                       'GPSLocation/test6/2']
+class Mosquito(object):
+    def __init__(self, browser):
         self._current_topic_index = 0
         client_id = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
         self._client = mqtt.Client(client_id)
@@ -42,6 +34,8 @@ class Mosquito(object) :
         self._client.on_message = self.on_message
         self._client.connect(HOST, PORT, 60)
         self._db = dataset.connect('sqlite:///gps.db')
+        self._browser = browser
+        g_mqtt.setBrowser(browser)
 
         self._set = set()
         self._last_size = 0
@@ -56,11 +50,11 @@ class Mosquito(object) :
     def on_message(self, client, userdata, msg):
         jData = msg.payload.decode('utf-8')
         print(msg.topic + " " + jData)
-        #self.save_to_sqlite(jData)
+        # self.save_to_sqlite(jData)
         g_mqtt.setInfo(jData)
 
     def _get_current_topic(self):
-        return self._topic[self._current_topic_index % len(self._topic)]
+        return CONST.topic[self._current_topic_index % len(CONST.topic)]
 
     def command_switch(self):
         self._client.unsubscribe(self._get_current_topic())
@@ -71,7 +65,7 @@ class Mosquito(object) :
 
     def save_to_sqlite(self, d):
         self._set.add(d)
-        if len(self._set) == self._last_size :
+        if len(self._set) == self._last_size:
             print("ok i am gonna save item")
             self._table = self._db[self._get_current_topic()]
             for gpsStr in self._set:

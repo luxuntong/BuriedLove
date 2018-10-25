@@ -28,3 +28,6 @@ decrypt
 *.rar
 .idea
 *.db
+.vscode
+ckz.py
+lt.py

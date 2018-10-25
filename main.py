@@ -5,6 +5,7 @@ from mqClient import py
 from RPC import RPC
 import dataset
 from mqtt import MQTT
+from browser import browserGo
 import json
 
 from aiohttp import web
@@ -12,6 +13,7 @@ from aiohttp import web_runner
 
 
 DBNAME = 'sqlite:///gps.db'
+
 
 async def init(loop):
     app = web.Application(loop=loop)
@@ -36,12 +38,16 @@ def start():
     loop.run_forever()
 
 
-if __name__ == '__main__':
-    mos = py.Mosquito()
-    t = threading.Thread(target=mos.client_loop, args=('hh',))
-    t.start()
+def startMos(browser):
+    mos = py.Mosquito(browser)
     mos.client_loop()
-    start()
+
+
+if __name__ == '__main__':
+    bg = browserGo()
+    browser = next(bg)
+    startMos(browser)
+    next(bg)
 '''
     db = dataset.connect(DBNAME)
     for gpsDict in db['GPSLocation/test1/1'].all():
