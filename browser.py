@@ -3,13 +3,14 @@
 import sys
 # from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtWidgets import (QWidget, QPushButton, QGridLayout, QComboBox,
-                             QVBoxLayout, QApplication)
+                             QLabel, QVBoxLayout, QApplication)
 from PyQt5.QtCore import QObject, pyqtSlot, QUrl
 # from PyQt5.QtCore import *
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtGui import QFont
 import JS_CODE
+import CONST
 
 
 class CallHandler(QObject):
@@ -30,6 +31,7 @@ class Browser(QWidget):
     def __init__(self):
         super().__init__()
         self._mqtt = None
+        self._topics = {}
         self.initUI()
 
     def initBrowser(self):
@@ -48,22 +50,23 @@ class Browser(QWidget):
     def test(self):
         print('im in browser test')
 
-    def createGrid(self):
-        grid = QGridLayout()
-        grid.setSpacing(10)
-
+    def createComBox(self):
         # combox
         combo = QComboBox(self)
-        combo.addItem("Ubuntu")
-        combo.addItem("Mandriva")
-        combo.addItem("Fedora")
-        combo.addItem("Arch")
-        combo.addItem("Gentoo")
-        grid.addWidget(combo)
-        return grid
+        for text in CONST.topic:
+            combo.addItem(text)
+        def abc(slot):
+            print('abc2 1231444')
+        combo.activated[str].connect(abc)
+        return combo
 
-    def createButton(self):
-        btn = QPushButton('Button', self)
+    def createDevCombox(self):
+        combo = QComboBox(self)
+        self.devComb = combo
+        return combo
+
+    def createButton(self, name):
+        btn = QPushButton(name, self)
         btn.resize(btn.sizeHint())
 
         def abc():
@@ -75,9 +78,10 @@ class Browser(QWidget):
         grid = QGridLayout()
         grid.setSpacing(10)
         self.initBrowser()
-
-        grid.addWidget(self.createButton(), 1, 0)
-        grid.addWidget(self.view, 2, 0)
+        grid.addWidget(self.createComBox(), 1, 0)
+        grid.addWidget(self.createButton('Subscribe'), 1, 1)
+        grid.addWidget(self.createDevCombox(), 1, 2)
+        grid.addWidget(self.view, 2, 0, 2, 4)
         self.setLayout(grid)
         self.setGeometry(0, 0, 1024, 768)
         # self.showMinimized()
@@ -96,5 +100,5 @@ def browserGo():
 
 if __name__ == '__main__':
     bg = browserGo()
-    next(bg)
+    ex = next(bg)
     next(bg)

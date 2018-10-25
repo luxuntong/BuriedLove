@@ -26,7 +26,6 @@ g_mqtt = MQTT()
 @singleton
 class Mosquito(object):
     def __init__(self, browser):
-        self._current_topic_index = 0
         client_id = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
         self._client = mqtt.Client(client_id)
         self._client.username_pw_set("hziottest", "123456789")
@@ -35,17 +34,21 @@ class Mosquito(object):
         self._client.connect(HOST, PORT, 60)
         self._db = dataset.connect('sqlite:///gps.db')
         self._browser = browser
-        g_mqtt.setBrowser(browser)
+        g_mqtt.setBrowser(browser, self)
+        self._topic = ''
+        self._last_topic = ''
 
         self._set = set()
         self._last_size = 0
+
+        self.client_loop()
 
     def client_loop(self, *args):
         self._client.loop_start()
 
     def on_connect(self, client, userdata, flags, rc):
         print("Connected with result code " + str(rc))
-        client.subscribe(self._get_current_topic())
+        # client.subscribe(self._get_current_topic())
 
     def on_message(self, client, userdata, msg):
         jData = msg.payload.decode('utf-8')
@@ -54,11 +57,15 @@ class Mosquito(object):
         g_mqtt.setInfo(jData)
 
     def _get_current_topic(self):
-        return CONST.topic[self._current_topic_index % len(CONST.topic)]
+        # return CONST.topic[self._current_topic_index % len(CONST.topic)]
+        return self._topic
+
+    def set_current_topic(self, topic):
+        self._last_topic = self._topic
+        self._topic = topic
 
     def command_switch(self):
-        self._client.unsubscribe(self._get_current_topic())
-        self._current_topic_index += 1
+        self._client.unsubscribe(self._last_topic)
         self._client.subscribe(self._get_current_topic())
         self._set = set()
         self._last_size = 0

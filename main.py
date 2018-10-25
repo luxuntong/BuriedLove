@@ -40,13 +40,13 @@ def start():
 
 def startMos(browser):
     mos = py.Mosquito(browser)
-    mos.client_loop()
 
 
 if __name__ == '__main__':
     bg = browserGo()
     browser = next(bg)
-    startMos(browser)
+    mos = py.Mosquito(browser)
+    # startMos(browser)
     next(bg)
 '''
     db = dataset.connect(DBNAME)

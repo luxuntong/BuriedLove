@@ -112,9 +112,11 @@ class MQTT(object):
         self.GPSPools = {}
         self._initData()
         self._browser = None
+        self._mos = None
 
-    def setBrowser(self, browser):
+    def setBrowser(self, browser, mos):
         self._browser = browser
+        self._mos = mos
 
     def _initData(self):
         jsons = Data().getDatas()
