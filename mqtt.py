@@ -35,6 +35,9 @@ class GPS(object):
                 key += m.group(2) + '&'
         self.key = key
 
+    def getGpsTuple(self):
+        return self.longitude, self.latitude
+
 
 # 单个设备的所有GPS信息池
 class GPSPool(list):
