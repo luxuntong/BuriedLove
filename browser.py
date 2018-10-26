@@ -14,6 +14,13 @@ import CONST
 
 
 class CallHandler(QObject):
+    def __init__(self, browser):
+        self._browser = browser
+
+    @pyqtSlot(str, result=str)
+    def init(self, test):
+        return test
+
     @pyqtSlot(result=str)
     def myHello(self):
         print('im in hello')
@@ -32,12 +39,16 @@ class Browser(QWidget):
         super().__init__()
         self._mqtt = None
         self._topics = {}
+        self._topic = CONST.topic[0]
+        self._devId = ''
+        self._poss = {}
+        self._posStr = str(CONST.RGB[0][0])
         self.initUI()
 
     def initBrowser(self):
         view = QWebEngineView()
         channel = QWebChannel()
-        handler = CallHandler()
+        handler = CallHandler(self)
         channel.registerObject('pyjs', handler)
         view.page().setWebChannel(channel)
         url_string = "file:///demo.html"
@@ -55,38 +66,86 @@ class Browser(QWidget):
         combo = QComboBox(self)
         for text in CONST.topic:
             combo.addItem(text)
-        def abc(slot):
-            print('abc2 1231444')
-        combo.activated[str].connect(abc)
+
+        def changeTopic(slot):
+            self._topic = slot
+
+        combo.activated[str].connect(changeTopic)
         return combo
 
     def createDevCombox(self):
         combo = QComboBox(self)
         self.devComb = combo
+
+        def changeDevId(devId):
+            self._devId = devId
+
+        combo.activated[str].connect(changeDevId)
         return combo
 
-    def createButton(self, name):
+    def subScribe(self):
+        if not self._mqtt:
+            print('ERROR: mqtt not set')
+            return
+
+        self._mqtt.doMosFunc('set_current_topic', (self._topic, ))
+        self._mqtt.doMosFunc('command_switch', ())
+
+    def setPos(self, posStr):
+        self._posStr = posStr
+        jsStr = JS_CODE.focus.replace('ckzlt_pos', posStr)
+        self.view.page().runJavaScript(jsStr)
+
+
+    def createPosCombox(self):
+        combo = QComboBox(self)
+        for posInfo in CONST.RGB:
+            posStr = str(posInfo[0])
+            combo.addItem(posStr)
+            self._poss[posStr] = posInfo
+
+        combo.activated[str].connect(self.setPos)
+        return combo
+
+
+    def createButton(self, name, func):
         btn = QPushButton(name, self)
         btn.resize(btn.sizeHint())
-
-        def abc():
-            self.view.page().runJavaScript(JS_CODE.test2)
-        btn.clicked.connect(abc)
+        btn.clicked.connect(func)
         return btn
+
+    def onGetPointsData(self, points):
+        print('getData:', points)
+
+    def register(self):
+        print('register:', self._devId)
+        self._mqtt.register(self._devId, 'browser', self.onGetPointsData)
 
     def initUI(self):
         grid = QGridLayout()
         grid.setSpacing(10)
         self.initBrowser()
         grid.addWidget(self.createComBox(), 1, 0)
-        grid.addWidget(self.createButton('Subscribe'), 1, 1)
+        grid.addWidget(self.createButton('Subscribe', self.subScribe), 1, 1)
         grid.addWidget(self.createDevCombox(), 1, 2)
-        grid.addWidget(self.view, 2, 0, 2, 4)
+        grid.addWidget(self.createButton('Register', self.register), 1, 3)
+        grid.addWidget(self.createPosCombox(), 2, 0)
+        grid.addWidget(self.view, 3, 0, 3, 4)
         self.setLayout(grid)
-        self.setGeometry(0, 0, 1024, 768)
+        # self.setGeometry(0, 0, 1024, 768)
+        self.setGeometry(0, 0, 300, 300)
         # self.showMinimized()
         self.setWindowTitle('BuriedLove')
         self.show()
+
+        self.setPos(self._posStr)
+
+    def addDevId(self, devId):
+        self._topics.setdefault(self._topic, [])
+        self._topics[self._topic].append(devId)
+        self.devComb.addItem(devId)
+        if not self._devId:
+            self._devId = devId
 
     def setMqtt(self, mqtt):
         self._mqtt = mqtt

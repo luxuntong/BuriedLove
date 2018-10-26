@@ -61,11 +61,13 @@ class Mosquito(object):
         return self._topic
 
     def set_current_topic(self, topic):
+        print('set topic:', topic)
         self._last_topic = self._topic
         self._topic = topic
 
     def command_switch(self):
-        self._client.unsubscribe(self._last_topic)
+        if self._last_topic:
+            self._client.unsubscribe(self._last_topic)
         self._client.subscribe(self._get_current_topic())
         self._set = set()
         self._last_size = 0

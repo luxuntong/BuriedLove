@@ -3,8 +3,8 @@ var map = new BMap.Map("allmap");
 map.centerAndZoom(new BMap.Point(120.404, 39.915), 14);
 map.enableScrollWheelZoom(true);'''
 
-test1 = '''
-map.centerAndZoom(new BMap.Point(118.404, 39.915), 14);
+focus = '''
+map.centerAndZoom(new BMap.Pointckzlt_pos, 14);
 '''
 
 test2 = '''

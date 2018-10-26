@@ -49,6 +49,7 @@ class GPSPool(list):
         self.minLongitude = 9999
         self.maxLatitude = 0
         self.maxLongitude = 0
+        self._funcs = {}
 
     def addData(self, data, isWrite=True):
         gps = GPS(data)
@@ -57,8 +58,21 @@ class GPSPool(list):
 
         self.keys.add(gps.key)
         heapq.heappush(self, gps)
+        self._notify()
+
         if isWrite:
             Data().addData(gps.data)
+
+    def register(self, name, func):
+        if name in self._funcs:
+            print('Error: name in notify:', name)
+            return
+
+        self._funcs[name] = func
+
+    def _notify(self):
+        for func in self._funcs.values():
+            func(self.getSortData())
 
     # 返回按照时间戳排序的gps信息队列
     def getSortData(self):
@@ -116,7 +130,11 @@ class MQTT(object):
 
     def setBrowser(self, browser, mos):
         self._browser = browser
+        self._browser.setMqtt(self)
         self._mos = mos
+
+    def doMosFunc(self, funcName, args):
+        getattr(self._mos, funcName)(*args)
 
     def _initData(self):
         jsons = Data().getDatas()
@@ -141,9 +159,22 @@ class MQTT(object):
 
     def setInfo(self, jsonStr, isWrite=True):
         devId = self.getDevId(jsonStr)
-        self.GPSPools.setdefault(devId, GPSPool(devId))
+        if devId not in self.GPSPools:
+            self.addNewPool(devId)
+
         self.GPSPools[devId].addData(jsonStr, isWrite)
+
+    def addNewPool(self, devId):
+        self.GPSPools.setdefault(devId, GPSPool(devId))
+        self._browser.addDevId(devId)
 
     def generateHtml(self):
         for pool in self.GPSPools.values():
             pool.generateHtml()
+
+    def register(self, devId, name, func):
+        if devId not in self.GPSPools:
+            print('Error: devId not in GPSPools:', devId)
+            return
+
+        self.GPSPools[devId].register(name, func)
