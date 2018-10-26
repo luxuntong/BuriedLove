@@ -6,11 +6,29 @@
     <style type="text/css">
     body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
     </style>
+    <script type="text/javascript" src="qwebchannel.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=7c6b27c580c457a4e46f21502b594bd7"></script>
     <title>折线上添加方向箭头</title>
+    <script>
+        window.onload = function () {
+            new QWebChannel(qt.webChannelTransport, function (channel) {
+                            window.pyjs = channel.objects.pyjs;
+                            pyjs.init(function(){});
+                        });
+        }
+    </script>
 </head>
 <body>
+    <div id="init" onclick="qt5test();">测试</div>
     <div id="allmap"></div>
+
+    <script>
+        function qt5test() {
+            pyjs.init(function (res) {
+            });
+        }
+        qt5test();
+    </script>
 </body>
 </html>
 <script type="text/javascript">
@@ -41,6 +59,5 @@ var polyline =new BMap.Polyline(pois, {
 });
 
 map.addOverlay(polyline);          //增加折线
-  
-  
+//document.getElementById('init').click();
 </script>

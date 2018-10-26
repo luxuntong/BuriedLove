@@ -15,11 +15,14 @@ import CONST
 
 class CallHandler(QObject):
     def __init__(self, browser):
+        super(CallHandler, self).__init__()
         self._browser = browser
 
-    @pyqtSlot(str, result=str)
-    def init(self, test):
-        return test
+    @pyqtSlot(result=str)
+    def init(self):
+        print('im in browser init')
+        self._browser.initFocus()
+        return 'browser'
 
     @pyqtSlot(result=str)
     def myHello(self):
@@ -51,12 +54,15 @@ class Browser(QWidget):
         handler = CallHandler(self)
         channel.registerObject('pyjs', handler)
         view.page().setWebChannel(channel)
-        url_string = "file:///demo.html"
+        url_string = "file:///html/demo.html"
         view.load(QUrl(url_string))
         view.show()
         self.view = view
         self.channel = channel
         self.handler = handler
+
+    def initFocus(self):
+        self.setPos(self._posStr)
 
     def test(self):
         print('im in browser test')
@@ -96,7 +102,6 @@ class Browser(QWidget):
         jsStr = JS_CODE.focus.replace('ckzlt_pos', posStr)
         self.view.page().runJavaScript(jsStr)
 
-
     def createPosCombox(self):
         combo = QComboBox(self)
         for posInfo in CONST.RGB:
@@ -107,7 +112,6 @@ class Browser(QWidget):
         combo.activated[str].connect(self.setPos)
         return combo
 
-
     def createButton(self, name, func):
         btn = QPushButton(name, self)
         btn.resize(btn.sizeHint())
@@ -116,6 +120,11 @@ class Browser(QWidget):
 
     def onGetPointsData(self, points):
         print('getData:', points)
+        self.view.page().runJavaScript(JS_CODE.removeOverlay)
+        points = ['new BMap.Point({},{})'.format(gps.longitude, gps.latitude) for gps in points]
+        pointsStr = ',\n\t'.join(points)
+        jsStr = JS_CODE.addOverlay.replace('ckzlt_points', pointsStr)
+        self.view.page().runJavaScript(jsStr)
 
     def register(self):
         print('register:', self._devId)
@@ -133,7 +142,7 @@ class Browser(QWidget):
         grid.addWidget(self.view, 3, 0, 3, 4)
         self.setLayout(grid)
         # self.setGeometry(0, 0, 1024, 768)
-        self.setGeometry(0, 0, 300, 300)
+        self.setGeometry(1000, 600, 300, 300)
         # self.showMinimized()
         self.setWindowTitle('BuriedLove')
         self.show()
