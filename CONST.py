@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 import time
-topic1 = ['GPSLocation/test1/1',
+topic = ['GPSLocation/test1/1',
          'GPSLocation/test1/2',
          'GPSLocation/test2/1',
          'GPSLocation/test2/2',
@@ -16,7 +16,7 @@ topic1 = ['GPSLocation/test1/1',
          'GPSLocation/test7/2',
          'GPSLocation/test8']
 
-topic = ['GPSLocation/1',
+topic1 = ['GPSLocation/1',
          'GPSLocation/2',
          'GPSLocation/3',
          'GPSLocation/4',
@@ -76,7 +76,7 @@ ConstBehavior = {1: u"绿灯左转",
                  4: u"红灯左转",
                  5: u"红灯右转",
                  6: u"红灯直行",
-                 7: u"掉头"}
+                 7: u"红灯等待"}
 
 
 class gaojia(object):
