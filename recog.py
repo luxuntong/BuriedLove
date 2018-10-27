@@ -12,34 +12,70 @@ def behaviorRecog(gpsLocationListOrderByTs,  ledGpsInfo):
     led_tuple = ledGpsInfo[0] # get rgb led loc
     near_list = getNearLedGpsList(gpsLocationListOrderByTs, led_tuple, 100)
     pos, _ = getNearestPos(near_list, led_tuple)
-    pec = isPeccancy(near_list[pos].timestamp, ledGpsInfo)
+    pec = is_single_peccancy(near_list[pos], ledGpsInfo)
     direction = getPassDirection(near_list[pos+1:], ledGpsInfo)
-    if direction == 'b':
+    w_pos, _ = getNearestLinePos(near_list, led_tuple)
+    wait = is_wait_single(near_list[w_pos])
+    if wait:
         return 7
-    elif direction == 's':
-        if pec:
-            return 3
-        else:
-            return 6
-    elif direction == 'l':
-        if pec:
-            return 4
-        else:
-            return 1
-    elif direction == 'r':
-        if pec:
-            return 5
-        else:
-            return 2
+    else:
+        if direction == 's':
+            if pec:
+                return 6
+            else:
+                return 3
+        elif direction == 'l':
+            if pec:
+                return 4
+            else:
+                return 1
+        elif direction == 'r':
+            if pec:
+                return 5
+            else:
+                return 2
 
-
-# 是否违章
-def isPeccancy(nearTimestamp, ledInfo):
-    delta = abs(nearTimestamp - ledInfo[1])
+def is_single_peccancy(gps, ledInfo):
+    delta = abs(gps.timestamp - ledInfo[1])
     passSec = delta % (ledInfo[2] + ledInfo[3])
-    # 不能 大于等于 因为这时候是穿过红灯的时候
     return passSec > ledInfo[2]
 
+# 是否违章
+def isPeccancy(gpsInfoList, ledInfo):
+    pec_dict = {True: 0, False:0}
+    for gps in gpsInfoList:
+        delta = abs(gps.timestamp - ledInfo[1])
+        passSec = delta %(ledInfo[2] + ledInfo[3])
+        pec_dict[passSec > ledInfo[2]] +=1
+    is_pec = True
+    max = 0
+    for t, n in pec_dict.items():
+        if n > max:
+            max = n
+            is_pec = t
+
+    # 不能 大于等于 因为这时候是穿过红灯的时候
+    return is_pec
+
+def is_wait_single(gps):
+    return gps.speed == 0.0
+
+
+def isWaiting(gpsList):
+    # true is wating
+    speed_dict = {True: 0, False: 0}
+    for gps in gpsList:
+        if gps.speed > 0.0:
+            speed_dict[False] +=1
+        else:
+            speed_dict[True] += 1
+    is_wait = True
+    max = 0
+    for t, n in speed_dict.items():
+        if n > max:
+            max = n
+            is_wait = t
+    return is_wait
 
 # 获取过红绿灯后的方向
 def getPassDirection(gpsAfterLed, ledInfo, precision=10):
@@ -49,7 +85,8 @@ def getPassDirection(gpsAfterLed, ledInfo, precision=10):
         'b': 0,
         'l': 0}
     for gps in gpsAfterLed[:precision]:
-        angle = getRelativePointAngle(ledInfo[0], gps.getGpsTuple())
+        # angle = getRelativePointAngle(ledInfo[0], gps.getGpsTuple())
+        angle = gps.direction
         key = getCorrectedDirection(angle)
         majority[key] += 1
     right_direction = 's'
@@ -80,13 +117,11 @@ def getRelativePointAngle(relativeLoc1, loc2):
 # 获取矫正后的方向，
 # s 是直行， r 右转， b 调头， l左转
 def getCorrectedDirection(angle):
-    if angle < 30 or angle > 330:
+    if angle <= 45.0 or angle >= 315.0:
         return 's'
-    elif 30 <= angle < 150:
+    elif 45.0 < angle <= 180.0:
         return 'r'
-    elif 150 <= angle < 210:
-        return 'b'
-    elif 210 <= angle < 330:
+    elif 180.0 < angle < 315.0:
         return 'l'
 
 # 相对于loc1 loc2在loc1的方位
@@ -122,14 +157,30 @@ def getAdvanceCount(gpsInfo, ledInfo):
     if dis > 1000:
         return
 
-# 返回离红绿灯最近的点
+# 返回离红绿灯线最近的点
 def getNearestPos(gpsList, ledLoc):
     if len(gpsList) == 0 :
         raise IndexError
+    led_line = 0.0
     nearestPos = 0
     neareat = getDistance(gpsList[0].getGpsTuple(), ledLoc)
     for gps in gpsList[1:]:
         dis = getDistance(gps.getGpsTuple(), ledLoc)
+        if neareat > dis:
+            neareat = dis
+            nearestPos = gpsList.index(gps)
+    return nearestPos, neareat
+
+# 返回离红绿灯线最近的点
+def getNearestLinePos(gpsList, ledLoc):
+    if len(gpsList) == 0 :
+        raise IndexError
+    led_line = 43.36
+    nearestPos = 0
+    neareat = getDistance(gpsList[0].getGpsTuple(), ledLoc)
+    for gps in gpsList[1:]:
+        dis = getDistance(gps.getGpsTuple(), ledLoc)
+        dis = fabs(dis - led_line)
         if neareat > dis:
             neareat = dis
             nearestPos = gpsList.index(gps)
@@ -207,11 +258,19 @@ def get_degrees_from_cossine(cos):
 if __name__ == '__main__':
     db = dataset.connect("sqlite:///gps.db")
     tb = db['GPSLocation/test1/1']
-    gpsdata = list()
-    for item in tb.find(devId = '5D8BDC41'):
-        gpsdata.append(GPS(json.dumps(item)))
-
-
-    ret = behaviorRecog(gpsdata, RGB[0])
-    print(ConstBehavior[ret])
+    devices = db.query("select * from 'GPSLocation/test1/1' group by devId;")
+    gpsList = list()
+    print(getDistance((120.19184666666666, 30.188776666666666),(120.191689, 30.189142)))
+    # for d in devices:
+    #     for item in tb.find(devId = d['devId']):
+    #         gpsList.append(GPS(json.dumps(item)))
+    #     ret = behaviorRecog(gpsList, RGB[0])
+    #     print(ConstBehavior[ret])
+    #     gpsList = list()
+    # for item in tb.find(devId = '5D8BDC41'):
+    #     gpsdata.append(GPS(json.dumps(item)))
+    #
+    #
+    # ret = behaviorRecog(gpsdata, RGB[0])
+    # print(ConstBehavior[ret])
 

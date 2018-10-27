@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import time
-#TODO replace
-topic1 = ['GPSLocation/test1/1',
+
+topic = ['GPSLocation/test1/1',
          'GPSLocation/test1/2',
          'GPSLocation/test2/1',
          'GPSLocation/test2/2',
@@ -17,7 +17,7 @@ topic1 = ['GPSLocation/test1/1',
          'GPSLocation/test7/2',
          'GPSLocation/test8']
 
-topic = ['GPSLocation/1',
+topic1 = ['GPSLocation/1',
           'GPSLocation/2',
           'GPSLocation/3',
           'GPSLocation/4',
@@ -35,6 +35,7 @@ def getDataType(index):
         return dataType.gaojia
     else:
         return dataType.display
+
 
 '''
 1#pos
@@ -81,12 +82,12 @@ RGB1 = [((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#
 
 
 class BHType(object):
-    lvzhi = 1
+    lvzuo = 1
     lvyou = 2
-    lvzuo = 3
-    hongzhi = 4
+    lvzhi = 3
+    hongzuo = 4
     hongyou = 5
-    hongzuo = 6
+    hongzhi = 6
     hongdeng = 7
 
 results = [BHType.lvzhi,#0
@@ -120,17 +121,18 @@ class DIR(object):
 
 
 
-ConstBehavior = {1: u"绿灯直行",
+ConstBehavior = {1: u"绿灯左转",
                  2: u"绿灯右转",
-                 3: u"绿灯左转",
-                 4: u"红灯直行",
+                 3: u"绿灯直行",
+                 4: u"红灯左转",
                  5: u"红灯右转",
-                 6: u"红灯左转",
-                 7: u"红灯等待",
-                 8: u"88"}
+                 6: u"红灯直行",
+                 7: u"红灯等待"}
+
 
 gaojiaResult = [u'地面行驶',
                 u'高架行驶']
+
 
 
 class gaojia(object):

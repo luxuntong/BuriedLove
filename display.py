@@ -121,9 +121,9 @@ class Ana(object):
 
         elif dataType == CONST.dataType.xingwei:
             for dev in self.GPSPools.values():
+                print(dev.devId)
                 ret = self.rgbAna(dev)
-                if ret == -1:
-                    ret = 8
+                rets[dev.devId] = 1
 
                 #TODO delete
                 '''
@@ -215,22 +215,27 @@ class Ana(object):
         topic = self._topic.replace('_', '/')
         index = CONST.topic.index(topic)
         rgb = CONST.RGB[index]
-        # print(CONST.ConstBehavior[recog.behaviorRecog(dev.getSortData(), rgb)])
-        ckz = recCkz.RecCkz(dev, index)
-        return ckz.calc()
+        ret = 1
+        try:
+            ret = recog.behaviorRecog(dev.getSortData(), rgb)
+        except IndexError:
+            print("Error on ", index)
+        # ckz = recCkz.RecCkz(dev, index)
+        # return ckz.calc()
+        return ret
 
 
 if __name__ == '__main__':
     am = AnaManager()
     am.test()
-    fig = plt.figure(1, facecolor='white')
-    fig.clf()
-    axl = plt.subplot(111, frameon=False)
-    '''
-    for index, data in enumerate(ana.getAllData()):        
-        x = [gps.timestamp for gps in data]
-        y = [gps.speed for gps in data]
-        plt.plot(x, y, color=colors[sorted_names[index]])
-        '''
-    am.pltTest(plt)
-    plt.show()
+    # fig = plt.figure(1, facecolor='white')
+    # fig.clf()
+    # axl = plt.subplot(111, frameon=False)
+    # '''
+    # for index, data in enumerate(ana.getAllData()):
+    #     x = [gps.timestamp for gps in data]
+    #     y = [gps.speed for gps in data]
+    #     plt.plot(x, y, color=colors[sorted_names[index]])
+    #     '''
+    # am.pltTest(plt)
+    # plt.show()
