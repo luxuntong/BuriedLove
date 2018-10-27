@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 import time
-topic = ['GPSLocation/test1/1',
+topic1 = ['GPSLocation/test1/1',
          'GPSLocation/test1/2',
          'GPSLocation/test2/1',
          'GPSLocation/test2/2',
@@ -16,7 +16,7 @@ topic = ['GPSLocation/test1/1',
          'GPSLocation/test7/2',
          'GPSLocation/test8']
 
-topic1 = ['GPSLocation/1',
+topic = ['GPSLocation/1',
          'GPSLocation/2',
          'GPSLocation/3',
          'GPSLocation/4',

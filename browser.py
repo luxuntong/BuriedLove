@@ -191,6 +191,8 @@ class Browser(QWidget):
         self._mqtt = mqtt
 
     def mqttAllFull(self):
+        return
+
         if not self._downloadMod:
             return
 

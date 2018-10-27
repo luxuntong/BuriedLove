@@ -180,7 +180,7 @@ class Ana(object):
         topic = self._topic.replace('_', '/')
         index = CONST.topic.index(topic)
         rgb = CONST.RGB[index]
-        print(CONST.ConstBehavior[recog.behaviorRecog(dev.getSortData(), rgb)])
+        # print(CONST.ConstBehavior[recog.behaviorRecog(dev.getSortData(), rgb)])
         ckz = recCkz.RecCkz(dev, index)
         return ckz.calc()
 
