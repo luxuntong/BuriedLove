@@ -37,7 +37,8 @@ def behaviorRecog(gpsLocationListOrderByTs,  ledGpsInfo):
 def isPeccancy(nearTimestamp, ledInfo):
     delta = abs(nearTimestamp - ledInfo[1])
     passSec = delta % (ledInfo[2] + ledInfo[3])
-    return passSec <= 40
+    # 不能 大于等于 因为这时候是穿过红灯的时候
+    return passSec > ledInfo[2]
 
 
 # 获取过红绿灯后的方向
@@ -48,8 +49,9 @@ def getPassDirection(gpsAfterLed, ledInfo, precision=10):
         'b': 0,
         'l': 0}
     for gps in gpsAfterLed[:precision]:
-        key = getCorrectedDirection(getRelativePointAngle(ledInfo[0], gps.getGpsTuple()))
-        majority[key] = majority.get(key, 0) + 1
+        angle = getRelativePointAngle(ledInfo[0], gps.getGpsTuple())
+        key = getCorrectedDirection(angle)
+        majority[key] += 1
     right_direction = 's'
     max = 0
     for direction, num in majority.items():
