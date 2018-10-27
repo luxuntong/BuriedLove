@@ -83,7 +83,10 @@ class Ana(object):
         
     def createGP(self, filename):
         gp = GPSPool('1', filename, None, False)
-        with open('data\\' + filename) as fr:
+        split_char = '/'
+        if os.name == 'nt':
+            split_char = "\\"
+        with open('data' + split_char + filename) as fr:
             for line in fr:
                 gp.addData(line)
         return gp
@@ -177,7 +180,7 @@ class Ana(object):
         topic = self._topic.replace('_', '/')
         index = CONST.topic.index(topic)
         rgb = CONST.RGB[index]
-        # print(recog.behaviorRecog(dev.getSortData(), rgb))
+        print(CONST.ConstBehavior[recog.behaviorRecog(dev.getSortData(), rgb)])
         ckz = recCkz.RecCkz(dev, index)
         return ckz.calc()
 

@@ -2,6 +2,9 @@ import cord_convert as cc
 from math import *
 from mqtt import GPS
 import numpy
+import dataset
+from CONST import *
+import json
 
 # gpsLocationListOrderByTs type is list, item is a dict
 # 
@@ -39,7 +42,11 @@ def isPeccancy(nearTimestamp, ledInfo):
 
 # 获取过红绿灯后的方向
 def getPassDirection(gpsAfterLed, ledInfo, precision=10):
-    majority = dict()
+    majority = {
+        'r': 0,
+        's': 0,
+        'b': 0,
+        'l': 0}
     for gps in gpsAfterLed[:precision]:
         key = getCorrectedDirection(getRelativePointAngle(ledInfo[0], gps.getGpsTuple()))
         majority[key] = majority.get(key, 0) + 1
@@ -115,8 +122,9 @@ def getAdvanceCount(gpsInfo, ledInfo):
 
 # 返回离红绿灯最近的点
 def getNearestPos(gpsList, ledLoc):
+    if len(gpsList) == 0 :
+        raise IndexError
     nearestPos = 0
-    print(len(gpsList))
     neareat = getDistance(gpsList[0].getGpsTuple(), ledLoc)
     for gps in gpsList[1:]:
         dis = getDistance(gps.getGpsTuple(), ledLoc)
@@ -138,7 +146,6 @@ def getNearLedGpsList(gpsList, led_loc, nearDis):
     k = lambda d:  d.timestamp
     nearList.sort(key=k)
     return nearList
-
 
 
 def getCorrectedCord(long, lat):
@@ -165,7 +172,7 @@ def getDistance(cord1, cord2):
         c = 2 * asin(sqrt(a))
         r = 6371393 # 地球平均半径，单位为米
         return float('%.2f' % (c * r))
-    print(cord1, cord2)
+
     return __distance(cord1[0], cord1[1], cord2[0], cord2[1])
 
 
@@ -196,5 +203,13 @@ def get_degrees_from_cossine(cos):
 
 
 if __name__ == '__main__':
-    print(getCorrectedCord(120.191601, 30.190383))
-    print(getCorrectedDirection(45))
+    db = dataset.connect("sqlite:///gps.db")
+    tb = db['GPSLocation/test1/1']
+    gpsdata = list()
+    for item in tb.find(devId = '5D8BDC41'):
+        gpsdata.append(GPS(json.dumps(item)))
+
+
+    ret = behaviorRecog(gpsdata, RGB[0])
+    print(ConstBehavior[ret])
+
