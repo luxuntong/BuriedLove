@@ -162,6 +162,7 @@ class GPSPool(list):
 @singleton
 class MQTT(object):
     def __init__(self, *args, **kwargs):
+        log('mqtt start!')
         self.first = True
         self._topics = {}
         # self._initData()
@@ -225,7 +226,7 @@ class MQTT(object):
     def isAllFull(self):
         poolCount = 0
         for topicDict in self._topics.values():
-            poolCount += topicDict
+            poolCount += len(topicDict)
 
         log('is full pcount:{}, fullset:{}'.format(poolCount, len(self._fullSet)))
         return poolCount == len(self._fullSet)

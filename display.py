@@ -4,6 +4,7 @@ from mqtt import GPSPool
 from matplotlib import colors as mcolors
 import math
 import CONST
+import recog
 import os
 
 colors = dict(mcolors.BASE_COLORS, **mcolors.CSS4_COLORS)
@@ -34,12 +35,30 @@ class AnaManager(object):
         gaoshang.pltTest(plt)
         #gaoxia.pltTest(plt)
 
+    def getTopicKey(self, index):
+        topicStr = CONST.topic[index]
+        topicStr = topicStr.replace('/', '_')
+        
+
     def test(self):
         gaoshang = self.topics['no']
         gaoxia = self.topics['GPSLocation_test7_2']
         gaoshang.test()
         print('-' * 30)
         gaoxia.test()
+        print('$' * 30)
+        gaoshang.anaAll(CONST.dataType.gaojia)
+        print('$' * 30)
+        gaoxia.anaAll(CONST.dataType.gaojia)
+        print(self.topics.keys())
+        for index in range(6):
+            topicStr = CONST.topic[index]
+            topicStr = topicStr.replace('/', '_')
+            topicGP = self.topics[topicStr]
+            print('&' * 30)
+            topicGP.anaAll(CONST.dataType.xingwei)
+
+
 
 class Ana(object):
     def __init__(self, topic, topicDict=None):
@@ -82,6 +101,14 @@ class Ana(object):
         else:
             return CONST.gaojia.notknow
 
+    def anaAll(self, dataType):
+        if dataType == CONST.dataType.gaojia:
+            for dev in self.GPSPools.values():
+                print(self.gaojia(dev))
+        elif dataType == CONST.dataType.xingwei:
+            for dev in self.GPSPools.values():
+                print(self.rgbAna(dev))
+
     def gaojia(self, dev):
         data = dev.getSortData()
         hashLen = self.getHashInfo(data, lambda gps: gps.altitude, round)
@@ -123,7 +150,10 @@ class Ana(object):
             print('devId:{}, avSpeed:{}, avHigh:{}'.format(gp.devId, gp.getAverageSpeed(), gp.getAverageHigh()))
     # ---------------------------------------
     def rgbAna(self, dev):
-        pass
+        topic = self._topic.replace('_', '/')
+        index = CONST.topic.index(topic)
+        rgb = CONST.RGB[index]
+        print(recog.behaviorRecog(dev.getSortData(), rgb))
 
 
 if __name__ == '__main__':

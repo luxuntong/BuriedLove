@@ -48,7 +48,7 @@ class Browser(QWidget):
         self._posStr = str(CONST.RGB[0][0])
         self.initUI()
         self._downloadMod = True
-        self._downloadIndex = 0
+        self._downloadIndex = 6
 
     def initBrowser(self):
         view = QWebEngineView()
