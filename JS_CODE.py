@@ -4,7 +4,7 @@ map.centerAndZoom(new BMap.Point(120.404, 39.915), 14);
 map.enableScrollWheelZoom(true);'''
 
 focus = '''
-map.centerAndZoom(new BMap.Pointckzlt_pos, 16);
+map.centerAndZoom(new BMap.Pointckzlt_pos, 17);
 var marker = new BMap.Marker(new BMap.Pointckzlt_pos);
 map.addOverlay(marker);
 '''
