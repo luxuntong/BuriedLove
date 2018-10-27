@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import random
+import recCkz
 from mqtt import GPSPool
 from matplotlib import colors as mcolors
 import math
@@ -32,13 +33,15 @@ class AnaManager(object):
     def pltTest(self, plt):
         gaoshang = self.topics['no']
         gaoxia = self.topics['GPSLocation_test7_2']
-        gaoshang.pltTest(plt)
+        #gaoshang.pltTest(plt)
         #gaoxia.pltTest(plt)
+        topicGP = self.getTopicKey(4)
+        topicGP.pltTest(plt)
 
     def getTopicKey(self, index):
         topicStr = CONST.topic[index]
         topicStr = topicStr.replace('/', '_')
-        
+        return self.topics[topicStr]
 
     def test(self):
         gaoshang = self.topics['no']
@@ -51,10 +54,8 @@ class AnaManager(object):
         print('$' * 30)
         gaoxia.anaAll(CONST.dataType.gaojia)
         print(self.topics.keys())
-        for index in range(6):
-            topicStr = CONST.topic[index]
-            topicStr = topicStr.replace('/', '_')
-            topicGP = self.topics[topicStr]
+        for index in range(5):
+            topicGP = self.getTopicKey(index)
             print('&' * 30)
             topicGP.anaAll(CONST.dataType.xingwei)
 
@@ -135,14 +136,25 @@ class Ana(object):
 
     def pltTest(self, plt):
         for index, dev in enumerate(self.GPSPools.values()):
-            if index != 5:
+            if index != 0:
                 continue
 
             data = dev.getSortData()
-            self.getHashInfo(data, lambda gps: gps.altitude, round)
-            x = [gps.timestamp for gps in data]
-            y = [gps.altitude for gps in data]
+
+            '''
+            x = [gps.longitude for gps in data]
+            y = [gps.latitude for gps in data]
             plt.plot(x, y, color=colors[sorted_names[index]])
+            plt.scatter(120.191689, 30.189142, color='blue')
+            '''
+            start = data[0]
+            rgbPos = CONST.RGB[0][0]
+            x = []
+            y = []
+            for gps in data:
+                x.append(gps.timestamp)
+                y.append(recCkz.RecCkz.getAngleGPS(start, gps, rgbPos))
+            plt.plot(x, y)
             break
 
     def test(self):
@@ -153,7 +165,9 @@ class Ana(object):
         topic = self._topic.replace('_', '/')
         index = CONST.topic.index(topic)
         rgb = CONST.RGB[index]
-        print(recog.behaviorRecog(dev.getSortData(), rgb))
+        # print(recog.behaviorRecog(dev.getSortData(), rgb))
+        ckz = recCkz.RecCkz(dev, index)
+        ckz.calc()
 
 
 if __name__ == '__main__':

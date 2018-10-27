@@ -6,7 +6,7 @@ import numpy
 # gpsLocationListOrderByTs type is list, item is a dict
 # 
 def behaviorRecog(gpsLocationListOrderByTs,  ledGpsInfo):
-    led_tuple = ledGpsInfo[0][0] # get rgb led loc
+    led_tuple = ledGpsInfo[0] # get rgb led loc
     near_list = getNearLedGpsList(gpsLocationListOrderByTs, led_tuple, 100)
     pos, _ = getNearestPos(near_list, led_tuple)
     pec = isPeccancy(near_list[pos].timestamp, ledGpsInfo)
@@ -41,10 +41,11 @@ def isPeccancy(nearTimestamp, ledInfo):
 def getPassDirection(gpsAfterLed, ledInfo, precision=10):
     majority = dict()
     for gps in gpsAfterLed[:precision]:
-        majority[getCorrectedDirection(getRelativePointAngle(ledInfo[0], gps.getGpsTuple()))] += 1
+        key = getCorrectedDirection(getRelativePointAngle(ledInfo[0], gps.getGpsTuple()))
+        majority[key] = majority.get(key, 0) + 1
     right_direction = 's'
     max = 0
-    for direction, num in majority:
+    for direction, num in majority.items():
         if num > max:
             max = num
             right_direction = direction
@@ -115,12 +116,13 @@ def getAdvanceCount(gpsInfo, ledInfo):
 # 返回离红绿灯最近的点
 def getNearestPos(gpsList, ledLoc):
     nearestPos = 0
-    neareat = getDistance(gpsList[0], ledLoc)
+    print(len(gpsList))
+    neareat = getDistance(gpsList[0].getGpsTuple(), ledLoc)
     for gps in gpsList[1:]:
         dis = getDistance(gps.getGpsTuple(), ledLoc)
         if neareat > dis:
             neareat = dis
-            nearestPos = gpsList.index(2)
+            nearestPos = gpsList.index(gps)
     return nearestPos, neareat
 
 
@@ -163,6 +165,7 @@ def getDistance(cord1, cord2):
         c = 2 * asin(sqrt(a))
         r = 6371393 # 地球平均半径，单位为米
         return float('%.2f' % (c * r))
+    print(cord1, cord2)
     return __distance(cord1[0], cord1[1], cord2[0], cord2[1])
 
 
