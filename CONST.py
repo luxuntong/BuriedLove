@@ -15,6 +15,8 @@ topic = ['GPSLocation/test1/1',
          'GPSLocation/test7/2',
          'GPSLocation/test8']
 
+
+
 '''
 1#pos
 2#timestamp for red led start
@@ -32,3 +34,16 @@ ConstBehavior = {1: u"正常左转",
                  5: u"非法右转",
                  6: u"非法直行",
                  7: u"掉头"}
+
+
+class gaojia(object):
+    xia = 0
+    shang = 1
+    notknow = 2
+
+    @classmethod
+    def isOK(cls, ret):
+        if ret == cls.xia or ret == cls.shang:
+            return True
+        else:
+            return False

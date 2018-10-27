@@ -1,10 +1,12 @@
 # coding=utf-8
 import time
+import logging
 import json
 import heapq
 import re
 from data import Data
 from singleton import singleton
+from mqClient.log import log
 
 
 class GPS(object):
@@ -42,7 +44,7 @@ class GPSPool(list):
     repList = [('ckzlt_mid', lambda gp: gp.getMidStr()),
                ('ckzlt_points', lambda gp: gp.getPointsStr())]
 
-    def __init__(self, topic, devId, owner):
+    def __init__(self, topic, devId, owner, isWrite=True):
         self.devId = devId
         self.keys = set()
         self.minLatitude = 9999
@@ -52,9 +54,12 @@ class GPSPool(list):
         self._funcs = {}
         self._repeat = 0
         print('will open1')
-        self._fw = open(topic.replace('/', '_') + '.' + devId, 'w')
+        self.isWrite = isWrite
+        if self.isWrite:
+            self._fw = open(topic.replace('/', '_') + '.' + devId, 'w')
         print('open2')
         self.isFull = False
+        self._topic = topic
         self._owner = owner
 
     def addData(self, data, isWrite=True):
@@ -63,14 +68,16 @@ class GPSPool(list):
             self._repeat += 1
             if self._repeat == 5:
                 print('repeat beyond 5:', self._repeat)
-                self._fw.close()
+                if self.isWrite:
+                    self._fw.close()
                 self.isFull = True
-                self._owner.devFull(self.devId)
+                log('devFull:{}, {}'.format(self._topic, self.devId))
+                self._owner.devFull(self._topic, self.devId)
             elif self._repeat > 5:
                 print('-' * 30)
             return
-
-        self._fw.write(data + '\n')
+        if self.isWrite:
+            self._fw.write(data + '\n')
         self.keys.add(gps.key)
         heapq.heappush(self, gps)
         self._notify()
@@ -89,6 +96,24 @@ class GPSPool(list):
     # 返回按照时间戳排序的gps信息队列
     def getSortData(self):
         return heapq.nsmallest(len(self), self)
+
+    def getAverageSpeed(self):
+        speed = 0
+        count = 0
+        for gps in self:
+            speed += gps.speed
+            count += 1
+
+        return speed / count
+
+    def getAverageHigh(self):
+        high = 0
+        count = 0
+        for gps in self:
+            high += gps.altitude
+            count += 1
+
+        return high / count
 
     def getEdgeValue(self):
         for gps in self:
@@ -135,7 +160,7 @@ class GPSPool(list):
 class MQTT(object):
     def __init__(self, *args, **kwargs):
         self.first = True
-        self.GPSPools = {}
+        self._topics = {}
         # self._initData()
         self._browser = None
         self._mos = None
@@ -175,34 +200,49 @@ class MQTT(object):
         return self._topic + '.' + devId
 
     def setInfo(self, topic, jsonStr, isWrite=True):
-        self._topic = topic
+        self._topics.setdefault(topic, {})
+        topicDict = self._topics[topic]
         devId = self.getDevId(jsonStr)
-        key = self.getKey(devId)
-        if key not in self.GPSPools:
-            self.addNewPool(key, devId)
+        if devId not in topicDict:
+            self.addNewPool(topic, devId)
+        topicDict[devId].addData(jsonStr, isWrite)
 
-        self.GPSPools[key].addData(jsonStr, isWrite)
-
-    def addNewPool(self, key, devId):
-        self.GPSPools.setdefault(key, GPSPool(self._topic, devId, self))
+    def addNewPool(self, topic, devId):
+        self._topics.setdefault(topic, {})
+        topicDict = self._topics[topic]
+        topicDict.setdefault(devId, GPSPool(topic, devId, self))
         self._browser.addDevId(devId)
 
-    def devFull(self, devId):
-        self._fullSet.add(devId)
+    def devFull(self, topic, devId):
+        key = topic + '.' + devId
+        self._fullSet.add(key)
         if self.isAllFull():
             self._browser.mqttAllFull()
 
     def isAllFull(self):
-        return len(self.GPSPools) == len(self._fullSet)
+        poolCount = 0
+        for topicDict in self._topics.values():
+            poolCount += topicDict
 
+        log('is full pcount:{}, fullset:{}'.format(poolCount, len(self._fullSet)))
+        return poolCount == len(self._fullSet)
+
+    '''
     def generateHtml(self):
         for pool in self.GPSPools.values():
             pool.generateHtml()
+    '''
+    def getDev(self, topic, devId):
+        topicDict = self._topics.get(topic)
+        if not topicDict:
+            return None
+
+        return topicDict.get(devId)
 
     def register(self, topic, devId, name, func):
-        key = topic + '.' + devId
-        if key not in self.GPSPools:
-            print('Error: devId not in GPSPools:', key)
+        dev = self.getDev(topic, devId)
+        if not dev:
+            logging.ERROR('Error: could register:', topic, devId)
             return
 
-        self.GPSPools[key].register(name, func)
+        dev.register(name, func)

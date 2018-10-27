@@ -1,3 +1,13 @@
+{"devId":"87AECCA3","timestamp":1539075896,"latitude":30.187831666666664,"longitude":120.19133333333333,"satellite":6,"hdop":1.17,"altitude":10.1,"speed":0.33,"direction":313.9}
+{"devId":"87AECCA3","timestamp":1539075897,"latitude":30.187845,"longitude":120.19135166666668,"satellite":7,"hdop":1.1,"altitude":10.4,"speed":1.81,"direction":11.27}
+{"devId":"87AECCA3","timestamp":1539075901,"latitude":30.187816666666663,"longitude":120.19133666666667,"satellite":7,"hdop":1.08,"altitude":12.5,"speed":0.0,"direction":87.46}
+{"devId":"87AECCA3","timestamp":1539075903,"latitude":30.18781,"longitude":120.19133333333333,"satellite":7,"hdop":1.08,"altitude":12.7,"speed":0.0,"direction":137.35}
+{"devId":"87AECCA3","timestamp":1539075906,"latitude":30.18781,"longitude":120.19133333333333,"satellite":8,"hdop":0.97,"altitude":10.3,"speed":0.0,"direction":137.35}
+{"devId":"87AECCA3","timestamp":1539075910,"latitude":30.18781,"longitude":120.19133333333333,"satellite":8,"hdop":0.97,"altitude":10.8,"speed":0.0,"direction":137.35}
+{"devId":"87AECCA3","timestamp":1539075913,"latitude":30.18781,"longitude":120.19133333333333,"satellite":8,"hdop":0.97,"altitude":11.2,"speed":0.0,"direction":137.35}
+{"devId":"87AECCA3","timestamp":1539075915,"latitude":30.18802833333333,"longitude":120.19188000000001,"satellite":9,"hdop":0.96,"altitude":11.1,"speed":0.65,"direction":86.51}
+{"devId":"87AECCA3","timestamp":1539075917,"latitude":30.188025,"longitude":120.19187333333333,"satellite":9,"hdop":0.96,"altitude":13.3,"speed":0.0,"direction":96.11}
+{"devId":"87AECCA3","timestamp":1539075920,"latitude":30.188021666666668,"longitude":120.19186833333333,"satellite":9,"hdop":0.96,"altitude":11.4,"speed":0.0,"direction":308.82}
 {"devId":"87AECCA3","timestamp":1539075922,"latitude":30.187953333333333,"longitude":120.19175666666666,"satellite":9,"hdop":0.96,"altitude":10.7,"speed":1.26,"direction":289.77}
 {"devId":"87AECCA3","timestamp":1539075925,"latitude":30.187941666666667,"longitude":120.19179000000001,"satellite":9,"hdop":0.96,"altitude":13.2,"speed":0.0,"direction":95.31}
 {"devId":"87AECCA3","timestamp":1539075927,"latitude":30.187941666666667,"longitude":120.19179000000001,"satellite":9,"hdop":0.96,"altitude":12.4,"speed":0.0,"direction":95.31}
@@ -126,13 +136,3 @@
 {"devId":"87AECCA3","timestamp":1539076261,"latitude":30.190361666666664,"longitude":120.191675,"satellite":11,"hdop":1.04,"altitude":11.0,"speed":0.0,"direction":198.11}
 {"devId":"87AECCA3","timestamp":1539076263,"latitude":30.190361666666664,"longitude":120.191675,"satellite":11,"hdop":1.04,"altitude":10.6,"speed":0.0,"direction":198.11}
 {"devId":"87AECCA3","timestamp":1539076266,"latitude":30.190361666666664,"longitude":120.191675,"satellite":11,"hdop":1.11,"altitude":12.8,"speed":0.0,"direction":198.11}
-{"devId":"87AECCA3","timestamp":1539075896,"latitude":30.187831666666664,"longitude":120.19133333333333,"satellite":6,"hdop":1.17,"altitude":10.1,"speed":0.33,"direction":313.9}
-{"devId":"87AECCA3","timestamp":1539075897,"latitude":30.187845,"longitude":120.19135166666668,"satellite":7,"hdop":1.1,"altitude":10.4,"speed":1.81,"direction":11.27}
-{"devId":"87AECCA3","timestamp":1539075901,"latitude":30.187816666666663,"longitude":120.19133666666667,"satellite":7,"hdop":1.08,"altitude":12.5,"speed":0.0,"direction":87.46}
-{"devId":"87AECCA3","timestamp":1539075903,"latitude":30.18781,"longitude":120.19133333333333,"satellite":7,"hdop":1.08,"altitude":12.7,"speed":0.0,"direction":137.35}
-{"devId":"87AECCA3","timestamp":1539075906,"latitude":30.18781,"longitude":120.19133333333333,"satellite":8,"hdop":0.97,"altitude":10.3,"speed":0.0,"direction":137.35}
-{"devId":"87AECCA3","timestamp":1539075910,"latitude":30.18781,"longitude":120.19133333333333,"satellite":8,"hdop":0.97,"altitude":10.8,"speed":0.0,"direction":137.35}
-{"devId":"87AECCA3","timestamp":1539075913,"latitude":30.18781,"longitude":120.19133333333333,"satellite":8,"hdop":0.97,"altitude":11.2,"speed":0.0,"direction":137.35}
-{"devId":"87AECCA3","timestamp":1539075915,"latitude":30.18802833333333,"longitude":120.19188000000001,"satellite":9,"hdop":0.96,"altitude":11.1,"speed":0.65,"direction":86.51}
-{"devId":"87AECCA3","timestamp":1539075917,"latitude":30.188025,"longitude":120.19187333333333,"satellite":9,"hdop":0.96,"altitude":13.3,"speed":0.0,"direction":96.11}
-{"devId":"87AECCA3","timestamp":1539075920,"latitude":30.188021666666668,"longitude":120.19186833333333,"satellite":9,"hdop":0.96,"altitude":11.4,"speed":0.0,"direction":308.82}
