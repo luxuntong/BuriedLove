@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import time
 #TODO replace
-topic = ['GPSLocation/test1/1',
+topic1 = ['GPSLocation/test1/1',
          'GPSLocation/test1/2',
          'GPSLocation/test2/1',
          'GPSLocation/test2/2',
@@ -17,7 +17,7 @@ topic = ['GPSLocation/test1/1',
          'GPSLocation/test7/2',
          'GPSLocation/test8']
 
-topic1 = ['GPSLocation/1',
+topic = ['GPSLocation/1',
           'GPSLocation/2',
           'GPSLocation/3',
           'GPSLocation/4',
@@ -29,9 +29,9 @@ topic1 = ['GPSLocation/1',
           'GPSLocation/10']
 #TODO
 def getDataType(index):
-    if index < 12:
+    if index < 6:
         return dataType.xingwei
-    elif index < 14:
+    elif index < 8:
         return dataType.gaojia
     else:
         return dataType.display
@@ -46,7 +46,25 @@ def getTimeStamp(timeStr):
     tm = time.strptime(timeStr, "%Y/%m/%d %H:%M:%S")
     return int(time.mktime(tm))
 
-RGB = [((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#0
+RGB = [((120.191689, 30.189142), getTimeStamp('2018/10/20 09:53:24'), 82, 38),#1
+       ((120.191689, 30.189142), getTimeStamp('2018/10/20 09:53:24'), 82, 38),#2
+       ((120.191689, 30.189142), getTimeStamp('2018/10/20 09:53:24'), 34, 86),#3
+       ((120.191689, 30.189142), getTimeStamp('2018/10/20 09:53:24'), 34, 86),#4
+       ((120.191689, 30.189142), getTimeStamp('2018/10/20 09:53:24'), 34, 86),#5
+       ((120.191689, 30.189142), getTimeStamp('2018/10/20 09:52:02'), 34, 86),#6
+       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#7
+       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#8
+       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#9
+       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#10
+       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#
+       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#
+       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#
+       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#
+       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#
+       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86)
+       ]
+
+RGB1 = [((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#0
        ((120.191689, 30.189142), getTimeStamp('2018/10/09 10:53:32'), 34, 86),#1
        ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:18:07'), 86, 34),#2
        ((120.191689, 30.189142), getTimeStamp('2018/10/09 10:54:06'), 86, 34),#3

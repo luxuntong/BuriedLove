@@ -35,7 +35,7 @@ class AnaManager(object):
         gaoxia = self.topics['GPSLocation_test7_2']
         #gaoshang.pltTest(plt)
         #gaoxia.pltTest(plt)
-        topicGP = self.getTopicKey(11)
+        topicGP = self.getTopicKey(2)
         topicGP.pltTest(plt)
 
     def getTopicKey(self, index):
@@ -50,18 +50,20 @@ class AnaManager(object):
         print('-' * 30)
         gaoxia.test()
         print('$' * 30)
-        gaoshang.anaAll(CONST.dataType.gaojia)
+        # gaoshang.anaAll(CONST.dataType.gaojia)
         print('$' * 30)
-        gaoxia.anaAll(CONST.dataType.gaojia)
+        # gaoxia.anaAll(CONST.dataType.gaojia)
         print(self.topics.keys())
         for index in range(12):
-            if index != 11:
-                continue
+            continue
 
             topicGP = self.getTopicKey(index)
             print('&' * 30)
             print(topicGP._topic)
             topicGP.anaAll(CONST.dataType.xingwei)
+
+        testG = self.topics['GPSLocation_3']
+        testG.anaAll(CONST.dataType.xingwei)
 
 
 
@@ -124,9 +126,12 @@ class Ana(object):
                     ret = 8
 
                 #TODO delete
+                '''
                 topic = self._topic.replace('_', '/')
                 index = CONST.topic.index(topic)
-                print(dev.devId, CONST.ConstBehavior[ret], CONST.ConstBehavior[CONST.results[index]])
+                '''
+                #print(dev.devId, CONST.ConstBehavior[ret], CONST.ConstBehavior[CONST.results[index]])
+                print(dev.devId, CONST.ConstBehavior[ret])
                 rets[dev.devId] = CONST.ConstBehavior[ret]
 
         return rets
@@ -163,7 +168,7 @@ class Ana(object):
 
     def pltTest(self, plt):
         for index, dev in enumerate(self.GPSPools.values()):
-            if dev.devId != 'GPSLocation_test6_2.DD7FDC41':
+            if dev.devId != 'GPSLocation_3.238104B1':
                 continue
 
             data = dev.getSortData()
