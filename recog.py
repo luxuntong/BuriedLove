@@ -1,15 +1,33 @@
 import cord_convert as cc
 from math import *
 from mqtt import GPS
+import numpy
 
 # gpsLocationListOrderByTs type is list, item is a dict
 # 
 def behaviorRecog(gpsLocationListOrderByTs,  ledGpsInfo):
-    legTuple = ledGpsInfo[0][0] # get rgb led loc
-    for gpsItem in gpsLocationListOrderByTs:
-        locTup = gpsItem['longitude'], gpsItem['latitude']
-        dis = getDistance(locTup, ledGpsInfo)
-
+    led_tuple = ledGpsInfo[0][0] # get rgb led loc
+    near_list = getNearLedGpsList(gpsLocationListOrderByTs, led_tuple, 100)
+    pos, _ = getNearestPos(near_list, led_tuple)
+    pec = isPeccancy(near_list[pos].timestamp, ledGpsInfo)
+    direction = getPassDirection(near_list[pos+1:], ledGpsInfo)
+    if direction == 'b':
+        return 7
+    elif direction == 's':
+        if pec:
+            return 3
+        else:
+            return 6
+    elif direction == 'l':
+        if pec:
+            return 4
+        else:
+            return 1
+    elif direction == 'r':
+        if pec:
+            return 5
+        else:
+            return 2
 
 
 # 是否违章
@@ -23,12 +41,43 @@ def isPeccancy(nearTimestamp, ledInfo):
 def getPassDirection(gpsAfterLed, ledInfo, precision=10):
     majority = dict()
     for gps in gpsAfterLed[:precision]:
-        majority[getQuadrant(gps.getGpsTuple(), ledInfo[0])] += 1
-    right = majority[1] + majority[2]
-    left = majority[3] + majority[4]
-    # 思考一下
+        majority[getCorrectedDirection(getRelativePointAngle(ledInfo[0], gps.getGpsTuple()))] += 1
+    right_direction = 's'
+    max = 0
+    for direction, num in majority:
+        if num > max:
+            max = num
+            right_direction = direction
+    return right_direction
 
 
+
+
+# 获取两点间相对第一点偏向角度，以顺时针计算。
+def getRelativePointAngle(relativeLoc1, loc2):
+    if relativeLoc1 == (0, 0):
+        loc2_relative = loc2
+    else:
+        loc2_relative = numpy.array([loc2[0] - relativeLoc1[0] + 1, loc2[1] - relativeLoc1[1] + 1])
+    loc1_relative = numpy.array([0, 1])
+    c = get_cosine(loc1_relative, loc2_relative)
+    deg =  get_degrees_from_cossine(c)
+    if loc2_relative[0] < 0.0:
+        deg = 360.0 - float(floor(deg))
+    return deg
+
+
+# 获取矫正后的方向，
+# s 是直行， r 右转， b 调头， l左转
+def getCorrectedDirection(angle):
+    if angle < 30 or angle > 330:
+        return 's'
+    elif 30 <= angle < 150:
+        return 'r'
+    elif 150 <= angle < 210:
+        return 'b'
+    elif 210 <= angle < 330:
+        return 'l'
 
 # 相对于loc1 loc2在loc1的方位
 def getQuadrant(loc1, loc2):
@@ -58,10 +107,6 @@ def isRightAngle(direction, quadrant):
         return False
 
 
-def isHeadingTo(gpsInfo, ledInfo):
-    pass
-
-
 def getAdvanceCount(gpsInfo, ledInfo):
     dis = getDistance(gpsInfo.getGpsTuple(), ledInfo)
     if dis > 1000:
@@ -78,11 +123,12 @@ def getNearestPos(gpsList, ledLoc):
             nearestPos = gpsList.index(2)
     return nearestPos, neareat
 
+
 # 返回离红绿灯100m以内的点
-def getNearLedGpsList(gpsList, ledInfo, nearDis):
+def getNearLedGpsList(gpsList, led_loc, nearDis):
     nearList = []
     for gps in gpsList:
-        dis = getDistance(gps.getGpsTuple(), ledInfo)
+        dis = getDistance(gps.getGpsTuple(), led_loc)
         # 如果距离离红绿灯小于一定距离
         if dis <= nearDis:
             nearList.append(gps)
@@ -120,5 +166,32 @@ def getDistance(cord1, cord2):
     return __distance(cord1[0], cord1[1], cord2[0], cord2[1])
 
 
+def get_cosine(v1, v2):
+    """ calculate cosine and returns cosine """
+    n1 = get_norm_of_vector(v1)
+    n2 = get_norm_of_vector(v2)
+    ip = get_inner_product(v1, v2)
+    return ip / (n1 * n2)
+
+
+def get_inner_product(v1, v2):
+    """ calculate inner product """
+    return numpy.dot(v1, v2)
+
+
+def get_norm_of_vector(v):
+    """ calculate norm of vector """
+    return numpy.linalg.norm(v)
+
+
+def get_radian_from_cosine(cos):
+    return numpy.arccos(cos)
+
+
+def get_degrees_from_cossine(cos):
+    return numpy.degrees(numpy.arccos(cos))
+
+
 if __name__ == '__main__':
     print(getCorrectedCord(120.191601, 30.190383))
+    print(getCorrectedDirection(45))
