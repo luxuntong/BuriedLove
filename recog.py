@@ -37,7 +37,7 @@ def behaviorRecog(gpsLocationListOrderByTs,  ledGpsInfo):
 def isPeccancy(nearTimestamp, ledInfo):
     delta = abs(nearTimestamp - ledInfo[1])
     passSec = delta % (ledInfo[2] + ledInfo[3])
-    return passSec <= 40
+    return passSec >= ledInfo[2]
 
 
 # 获取过红绿灯后的方向
