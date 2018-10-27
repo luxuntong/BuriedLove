@@ -122,6 +122,8 @@ def getAdvanceCount(gpsInfo, ledInfo):
 
 # 返回离红绿灯最近的点
 def getNearestPos(gpsList, ledLoc):
+    if len(gpsList) == 0 :
+        raise IndexError
     nearestPos = 0
     neareat = getDistance(gpsList[0].getGpsTuple(), ledLoc)
     for gps in gpsList[1:]:

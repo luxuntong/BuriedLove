@@ -82,7 +82,10 @@ class Ana(object):
         
     def createGP(self, filename):
         gp = GPSPool('1', filename, None, False)
-        with open('data\\' + filename) as fr:
+        split_char = '/'
+        if os.name == 'nt':
+            split_char = "\\"
+        with open('data' + split_char + filename) as fr:
             for line in fr:
                 gp.addData(line)
         return gp
@@ -108,7 +111,10 @@ class Ana(object):
                 print(self.gaojia(dev))
         elif dataType == CONST.dataType.xingwei:
             for dev in self.GPSPools.values():
-                print(self.rgbAna(dev))
+                try:
+                    print(self.rgbAna(dev))
+                except IndexError:
+                    print("无法判断该设备情况", dev.devId)
 
     def gaojia(self, dev):
         data = dev.getSortData()
@@ -165,7 +171,7 @@ class Ana(object):
         topic = self._topic.replace('_', '/')
         index = CONST.topic.index(topic)
         rgb = CONST.RGB[index]
-        # print(recog.behaviorRecog(dev.getSortData(), rgb))
+        print(CONST.ConstBehavior[recog.behaviorRecog(dev.getSortData(), rgb)])
         ckz = recCkz.RecCkz(dev, index)
         ckz.calc()
 
