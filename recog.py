@@ -2,11 +2,14 @@ import cord_convert as cc
 from math import *
 from mqtt import GPS
 import numpy
+import dataset
+from CONST import *
+import json
 
 # gpsLocationListOrderByTs type is list, item is a dict
 # 
 def behaviorRecog(gpsLocationListOrderByTs,  ledGpsInfo):
-    led_tuple = ledGpsInfo[0][0] # get rgb led loc
+    led_tuple = ledGpsInfo[0] # get rgb led loc
     near_list = getNearLedGpsList(gpsLocationListOrderByTs, led_tuple, 100)
     pos, _ = getNearestPos(near_list, led_tuple)
     pec = isPeccancy(near_list[pos].timestamp, ledGpsInfo)
@@ -39,12 +42,16 @@ def isPeccancy(nearTimestamp, ledInfo):
 
 # 获取过红绿灯后的方向
 def getPassDirection(gpsAfterLed, ledInfo, precision=10):
-    majority = dict()
+    majority = {
+        'r': 0,
+        's': 0,
+        'b': 0,
+        'l': 0}
     for gps in gpsAfterLed[:precision]:
         majority[getCorrectedDirection(getRelativePointAngle(ledInfo[0], gps.getGpsTuple()))] += 1
     right_direction = 's'
     max = 0
-    for direction, num in majority:
+    for direction, num in majority.items():
         if num > max:
             max = num
             right_direction = direction
@@ -115,12 +122,12 @@ def getAdvanceCount(gpsInfo, ledInfo):
 # 返回离红绿灯最近的点
 def getNearestPos(gpsList, ledLoc):
     nearestPos = 0
-    neareat = getDistance(gpsList[0], ledLoc)
+    neareat = getDistance(gpsList[0].getGpsTuple(), ledLoc)
     for gps in gpsList[1:]:
         dis = getDistance(gps.getGpsTuple(), ledLoc)
         if neareat > dis:
             neareat = dis
-            nearestPos = gpsList.index(2)
+            nearestPos = gpsList.index(gps)
     return nearestPos, neareat
 
 
@@ -136,7 +143,6 @@ def getNearLedGpsList(gpsList, led_loc, nearDis):
     k = lambda d:  d.timestamp
     nearList.sort(key=k)
     return nearList
-
 
 
 def getCorrectedCord(long, lat):
@@ -193,5 +199,13 @@ def get_degrees_from_cossine(cos):
 
 
 if __name__ == '__main__':
-    print(getCorrectedCord(120.191601, 30.190383))
-    print(getCorrectedDirection(45))
+    db = dataset.connect("sqlite:///gps.db")
+    tb = db['GPSLocation/test1/1']
+    gpsdata = list()
+    for item in tb.find(devId = '5D8BDC41'):
+        gpsdata.append(GPS(json.dumps(item)))
+
+
+    ret = behaviorRecog(gpsdata, RGB[0])
+    print(ConstBehavior[ret])
+
