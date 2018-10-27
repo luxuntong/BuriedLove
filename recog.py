@@ -48,7 +48,8 @@ def getPassDirection(gpsAfterLed, ledInfo, precision=10):
         'b': 0,
         'l': 0}
     for gps in gpsAfterLed[:precision]:
-        majority[getCorrectedDirection(getRelativePointAngle(ledInfo[0], gps.getGpsTuple()))] += 1
+        key = getCorrectedDirection(getRelativePointAngle(ledInfo[0], gps.getGpsTuple()))
+        majority[key] = majority.get(key, 0) + 1
     right_direction = 's'
     max = 0
     for direction, num in majority.items():
@@ -169,6 +170,7 @@ def getDistance(cord1, cord2):
         c = 2 * asin(sqrt(a))
         r = 6371393 # 地球平均半径，单位为米
         return float('%.2f' % (c * r))
+
     return __distance(cord1[0], cord1[1], cord2[0], cord2[1])
 
 

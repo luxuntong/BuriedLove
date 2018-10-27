@@ -47,7 +47,7 @@ class GPSPool(list):
     repList = [('ckzlt_mid', lambda gp: gp.getMidStr()),
                ('ckzlt_points', lambda gp: gp.getPointsStr())]
 
-    def __init__(self, topic, devId, owner, isWrite=True):
+    def __init__(self, topic, devId, owner, isWrite=False):
         self.devId = devId
         self.keys = set()
         self.minLatitude = 9999

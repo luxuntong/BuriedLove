@@ -11,8 +11,22 @@ topic = ['GPSLocation/test1/1',
          'GPSLocation/test5/1',
          'GPSLocation/test5/2',
          'GPSLocation/test6/1',
-         'GPSLocation/test6/2']
+         'GPSLocation/test6/2',
+         'GPSLocation/test7/1',
+         'GPSLocation/test7/2',
+         'GPSLocation/test8']
 
+topic1 = ['GPSLocation/1',
+          'GPSLocation/2',
+          'GPSLocation/3',
+          'GPSLocation/4',
+          'GPSLocation/5',
+          'GPSLocation/6',
+          'GPSLocation/7',
+          'GPSLocation/8',
+          'GPSLocation/9',
+          'GPSLocation/10'
+          ]
 
 
 '''
