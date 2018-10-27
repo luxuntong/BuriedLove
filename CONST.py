@@ -10,12 +10,7 @@ topic = ['GPSLocation/test1/1',
          'GPSLocation/test5/1',
          'GPSLocation/test5/2',
          'GPSLocation/test6/1',
-         'GPSLocation/test6/2',
-         'GPSLocation/test7/1',
-         'GPSLocation/test7/2',
-         'GPSLocation/test8']
-
-
+         'GPSLocation/test6/2']
 
 '''
 1#pos
@@ -23,8 +18,7 @@ topic = ['GPSLocation/test1/1',
 3#red led duration
 4#green led duration
 '''
-RGB = [((120.191689, 30.189142), 1538982539, 40, 20),
-       ((120.18871666666668, 30.185471666666665), 1539051068, 20, 20)]
+RGB = [((120.191689, 30.189142), 1538982539, 40, 20), ]
 
 
 ConstBehavior = {1: u"正常左转",
@@ -47,3 +41,8 @@ class gaojia(object):
             return True
         else:
             return False
+
+ConstQuadrant = {1: u"东北方",
+                 2: u"东南方",
+                 3: u"西南方",
+                 4: u"西北方"}
