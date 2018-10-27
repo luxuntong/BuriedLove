@@ -8,8 +8,14 @@ import CONST
 
 HOST = "iotdevrd.chinacloudapp.cn"
 PORT = 1889
-
-
+user = 'hziottest'
+pwd = '123456789'
+'''
+HOST = '3.1.2.244'
+PORT = 1889
+user = 'iotadmin'
+pwd = 'iotadmin_2018'
+'''
 def singleton(cls, *args, **kw):
     instances = {}
 
@@ -28,7 +34,8 @@ class Mosquito(object):
     def __init__(self, browser):
         client_id = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
         self._client = mqtt.Client(client_id)
-        self._client.username_pw_set("hziottest", "123456789")
+        #self._client.username_pw_set("hziottest", "123456789")
+        self._client.username_pw_set(user, pwd)
         self._client.on_connect = self.on_connect
         self._client.on_message = self.on_message
         self._client.connect(HOST, PORT, 60)

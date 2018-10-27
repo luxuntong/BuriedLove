@@ -4,6 +4,7 @@ import logging
 import json
 import heapq
 import re
+import threading
 from data import Data
 from singleton import singleton
 from mqClient.log import log
@@ -83,7 +84,9 @@ class GPSPool(list):
             self._fw.write(data + '\n')
         self.keys.add(gps.key)
         heapq.heappush(self, gps)
-        self._notify()
+
+        if len(self) % 10 == 0:
+            self._notify()
 
     def register(self, name, func):
         if name in self._funcs:
@@ -159,6 +162,11 @@ class GPSPool(list):
             fw.write(data)
 
 
+def watch(mqtt):
+    mqtt.onTimer()
+    timer = threading.Timer(2.0, watch, mqtt)
+    timer.start()
+
 @singleton
 class MQTT(object):
     def __init__(self, *args, **kwargs):
@@ -170,6 +178,7 @@ class MQTT(object):
         self._mos = None
         self._fullSet = set()
         self._topic = None
+        # timer = threading.Timer(2.0, watch, )
 
     def setBrowser(self, browser, mos):
         self._browser = browser
@@ -242,6 +251,9 @@ class MQTT(object):
             return None
 
         return topicDict.get(devId)
+
+    def getTopicDict(self, topic):
+        return self._topics.get(topic)
 
     def register(self, topic, devId, name, func):
         dev = self.getDev(topic, devId)

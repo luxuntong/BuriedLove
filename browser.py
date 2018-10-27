@@ -8,9 +8,11 @@ from PyQt5.QtCore import QObject, pyqtSlot, QUrl
 # from PyQt5.QtCore import *
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineWidgets import QWebEngineView
+from display import Ana
 from PyQt5.QtGui import QFont
 import JS_CODE
 import CONST
+
 
 
 class CallHandler(QObject):
@@ -158,6 +160,7 @@ class Browser(QWidget):
         grid.addWidget(self.createDevCombox(), 1, 2)
         grid.addWidget(self.createButton('Register', self.register), 1, 3)
         grid.addWidget(self.createPosCombox(), 2, 0)
+        grid.addWidget(self.createButton('test', self.testResult))
         grid.addWidget(self.view, 3, 0, 3, 4)
         self.setLayout(grid)
         # self.setGeometry(0, 0, 1024, 768)
@@ -167,6 +170,15 @@ class Browser(QWidget):
         self.show()
 
         self.setPos(self._posStr)
+
+    def testResult(self):
+        try:
+            topicData = self._mqtt.getTopicDict(self._topic)
+            ana = Ana(self._topic, topicData)
+            rets = ana.anaAll(CONST.dataType.xingwei)
+            print(rets)
+        except Exception as e:
+            print(e)
 
     def addDevId(self, devId):
         self._topics.setdefault(self._topic, [])
