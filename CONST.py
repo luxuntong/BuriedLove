@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 import time
+
 topic = ['GPSLocation/test1/1',
          'GPSLocation/test1/2',
          'GPSLocation/test2/1',
@@ -17,17 +18,23 @@ topic = ['GPSLocation/test1/1',
          'GPSLocation/test8']
 
 topic1 = ['GPSLocation/1',
-         'GPSLocation/2',
-         'GPSLocation/3',
-         'GPSLocation/4',
-         'GPSLocation/5',
-         'GPSLocation/6',
-         'GPSLocation/7',
-         'GPSLocation/8',
-         'GPSLocation/9',
-         'GPSLocation/10']
-
-
+          'GPSLocation/2',
+          'GPSLocation/3',
+          'GPSLocation/4',
+          'GPSLocation/5',
+          'GPSLocation/6',
+          'GPSLocation/7',
+          'GPSLocation/8',
+          'GPSLocation/9',
+          'GPSLocation/10']
+#TODO
+def getDataType(index):
+    if index < 12:
+        return dataType.xingwei
+    elif index < 14:
+        return dataType.gaojia
+    else:
+        return dataType.display
 
 
 '''
@@ -55,28 +62,59 @@ RGB = [((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#0
        ((120.191689, 30.189142), getTimeStamp('2018/10/09 10:54:08'), 22, 98)#12
        ]
 
+
+class BHType(object):
+    lvzhi = 1
+    lvyou = 2
+    lvzuo = 3
+    hongzhi = 4
+    hongyou = 5
+    hongzuo = 6
+    hongdeng = 7
+
+results = [BHType.lvzhi,#0
+           BHType.lvzhi,#1
+           BHType.hongzhi,#2
+           BHType.hongzhi,#3
+           BHType.lvzuo,#4
+           BHType.lvzuo,#5
+           BHType.hongdeng,#6
+           BHType.hongdeng,#7
+           BHType.hongzuo,#8
+           BHType.hongzuo,#9
+           BHType.lvyou,#10
+           BHType.lvyou,##11
+           BHType.lvzhi,#
+           BHType.lvzhi,#
+           BHType.lvzhi,#
+           BHType.lvzhi,#
+           BHType.lvzhi,#
+           BHType.lvzhi,#
+           BHType.lvzhi,
+           BHType.lvzhi
+           ]
+
+
 class DIR(object):
     left = 0
     forward = 1
     right = 2
 
-class BHType(object):
-    lvzhi = 0
-    lvyou = 1
-    lvzuo = 2
-    hongzhi = 3
-    hongyou = 4
-    hongzuo = 5
-    hongdeng = 6
 
 
-ConstBehavior = {1: u"绿灯左转",
+
+ConstBehavior = {1: u"绿灯直行",
                  2: u"绿灯右转",
-                 3: u"绿灯直行",
-                 4: u"红灯左转",
+                 3: u"绿灯左转",
+                 4: u"红灯直行",
                  5: u"红灯右转",
                  6: u"红灯直行",
                  7: u"红灯等待"}
+
+
+gaojiaResult = [u'地面行驶',
+                u'高架行驶']
+
 
 
 class gaojia(object):

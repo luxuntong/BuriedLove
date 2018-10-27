@@ -9,6 +9,7 @@ from PyQt5.QtCore import QObject, pyqtSlot, QUrl
 from PyQt5.QtWebChannel import QWebChannel
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from display import Ana
+import recog
 from PyQt5.QtGui import QFont
 import JS_CODE
 import CONST
@@ -47,10 +48,14 @@ class Browser(QWidget):
         self._topic = CONST.topic[0]
         self._devId = ''
         self._poss = {}
-        self._posStr = str(CONST.RGB[0][0])
+        pos = CONST.RGB[0][0]
+        pos = recog.getCorrectedCord(*pos)
+        self._posStr = str(pos)
         self.initUI()
         self._downloadMod = True
         self._downloadIndex = 6
+        self._registerInfo = None
+
 
     def initBrowser(self):
         view = QWebEngineView()
@@ -100,10 +105,12 @@ class Browser(QWidget):
 
         self._mqtt.doMosFunc('set_current_topic', (self._topic, ))
         self._mqtt.doMosFunc('command_switch', ())
+        self.devComb.clear()
 
     def setPos(self, posStr):
         self._posStr = posStr
         jsStr = JS_CODE.focus.replace('ckzlt_pos', posStr)
+        print(jsStr)
         self.view.page().runJavaScript(jsStr)
 
     def createPosCombox(self):
@@ -125,7 +132,8 @@ class Browser(QWidget):
     def onGetPointsData(self, points):
         print('getData:', len(points), points)
         self.view.page().runJavaScript(JS_CODE.removeOverlay)
-        points = ['new BMap.Point({},{})'.format(gps.longitude, gps.latitude) for gps in points]
+        points = [recog.getCorrectedCord(gps.longitude, gps.latitude) for gps in points]
+        points = ['new BMap.Point({},{})'.format(pos[0], pos[1]) for pos in points]
         pointsStr = ',\n\t'.join(points)
         jsStr = JS_CODE.addOverlay.replace('ckzlt_points', pointsStr)
         self.view.page().runJavaScript(jsStr)
@@ -133,6 +141,7 @@ class Browser(QWidget):
     def register(self):
         print('register:', self._devId)
         self._mqtt.register(self._topic, self._devId, 'browser', self.onGetPointsData)
+        self._registerInfo = (self._topic, self._devId)
         
     def createScroll(self):
         self.topFiller = QWidget()
@@ -151,6 +160,19 @@ class Browser(QWidget):
         self.scroll = scroll
         return scroll
 
+    def createStatus(self):
+        lbl = QLabel(self)
+        self._statusLbl = lbl
+        return lbl
+
+    def setStatus(self, data):
+        self._statusLbl.setText(data)
+
+    def createLabel(self):
+        lbl = QLabel(self)
+        self._logLbl = lbl
+        return lbl
+
     def initUI(self):
         grid = QGridLayout()
         grid.setSpacing(10)
@@ -160,8 +182,10 @@ class Browser(QWidget):
         grid.addWidget(self.createDevCombox(), 1, 2)
         grid.addWidget(self.createButton('Register', self.register), 1, 3)
         grid.addWidget(self.createPosCombox(), 2, 0)
-        grid.addWidget(self.createButton('test', self.testResult))
-        grid.addWidget(self.view, 3, 0, 3, 4)
+        grid.addWidget(self.createButton('test', self.testResult), 3, 0)
+        grid.addWidget(self.createStatus(), 4, 0)
+        grid.addWidget(self.createLabel(), 2, 1, 3, 3)
+        grid.addWidget(self.view, 5, 0, 3, 4)
         self.setLayout(grid)
         # self.setGeometry(0, 0, 1024, 768)
         self.setGeometry(0, 0, 1024, 768)
@@ -172,36 +196,51 @@ class Browser(QWidget):
         self.setPos(self._posStr)
 
     def testResult(self):
+        retData = 'Result:\n'
         try:
             topicData = self._mqtt.getTopicDict(self._topic)
+            index = CONST.topic.index(self._topic)
             ana = Ana(self._topic, topicData)
-            rets = ana.anaAll(CONST.dataType.xingwei)
+            dataType = CONST.getDataType(index)
+            rets = ana.anaAll(dataType)
             print(rets)
+            for devId, ret in rets.items():
+                retData += devId + ': ' + ret + '\n'
+
+            print(retData)
+            self._logLbl.setText(retData)
+
         except Exception as e:
             print(e)
 
+    def getCurrTopicInfo(self):
+        strRet = 'topic:{}\n'.format(self._topic)
+        devs = self._topics[self._topic]
+        devs = [key + (': finished' if right else ': receiving') for key, right in devs.items()]
+        devData = '\n'.join(devs)
+        strRet += devData
+        return strRet
+
     def addDevId(self, devId):
-        self._topics.setdefault(self._topic, [])
-        self._topics[self._topic].append(devId)
+        self._topics.setdefault(self._topic, {})
+        self._topics[self._topic][devId] = False
         self.devComb.addItem(devId)
         if not self._devId:
             self._devId = devId
 
+        self.setStatus('receive')
+        self._logLbl.setText(self.getCurrTopicInfo())
+
     def setMqtt(self, mqtt):
         self._mqtt = mqtt
 
+    def devFull(self, devId):
+        self._topics[self._topic][devId] = True
+        self._logLbl.setText(self.getCurrTopicInfo())
+
     def mqttAllFull(self):
-        return
-
-        if not self._downloadMod:
-            return
-
-        self._downloadIndex += 1
-        if self._downloadIndex >= len(CONST.topic):
-            return
-
-        self._topic = CONST.topic[self._downloadIndex]
-        self.subScribe()
+        self.testResult()
+        self.setStatus('finished')
 
 
 def browserGo():

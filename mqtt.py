@@ -229,6 +229,7 @@ class MQTT(object):
     def devFull(self, topic, devId):
         key = topic + '.' + devId
         self._fullSet.add(key)
+        self._browser.devFull(devId)
         if self.isAllFull():
             self._browser.mqttAllFull()
 

@@ -35,7 +35,7 @@ class AnaManager(object):
         gaoxia = self.topics['GPSLocation_test7_2']
         #gaoshang.pltTest(plt)
         #gaoxia.pltTest(plt)
-        topicGP = self.getTopicKey(1)
+        topicGP = self.getTopicKey(11)
         topicGP.pltTest(plt)
 
     def getTopicKey(self, index):
@@ -55,6 +55,9 @@ class AnaManager(object):
         gaoxia.anaAll(CONST.dataType.gaojia)
         print(self.topics.keys())
         for index in range(12):
+            if index != 11:
+                continue
+
             topicGP = self.getTopicKey(index)
             print('&' * 30)
             print(topicGP._topic)
@@ -112,13 +115,23 @@ class Ana(object):
             for dev in self.GPSPools.values():
                 ret = self.gaojia(dev)
                 print(ret)
-                rets[dev.devId] = ret
+                rets[dev.devId] = CONST.gaojiaResult[ret]
 
         elif dataType == CONST.dataType.xingwei:
             for dev in self.GPSPools.values():
                 print(dev.devId)
                 self.rgbAna(dev)
                 rets[dev.devId] = 1
+
+                # ret = self.rgbAna(dev)
+                # if ret == -1:
+                #     ret = 8
+                #
+                # #TODO delete
+                # topic = self._topic.replace('_', '/')
+                # index = CONST.topic.index(topic)
+                # print(dev.devId, CONST.ConstBehavior[ret], CONST.ConstBehavior[CONST.results[index]])
+                # rets[dev.devId] = CONST.ConstBehavior[ret]
 
         return rets
 
@@ -146,9 +159,15 @@ class Ana(object):
         minRate = min(hashInfo.values())
         return len(hashInfo)
 
+    def isGreen(self, timestamp):
+        whole = self.rDur + self.gDur
+        t = timestamp - self.gStart
+        t = t % whole
+        return t <= self.gDur
+
     def pltTest(self, plt):
         for index, dev in enumerate(self.GPSPools.values()):
-            if index != 0:
+            if dev.devId != 'GPSLocation_test6_2.DD7FDC41':
                 continue
 
             data = dev.getSortData()
@@ -164,10 +183,26 @@ class Ana(object):
             rgbPos = CONST.RGB[0][0]
             x = []
             y = []
+            #
+            rgb = CONST.RGB[11]
+            self.gStart = rgb[1]
+            self.gDur = rgb[2]
+            self.rDur = rgb[3]
+            #
+            last = False
             for gps in data:
+                gr = self.isGreen(gps.timestamp)
+                if gr != last:
+                    if x:
+                        plt.plot(x, y, color='blue' if last else 'red')
+                    x = []
+                    y = []
+
                 x.append(gps.timestamp)
                 y.append(recCkz.RecCkz.getAngleGPS(start, gps, rgbPos))
-            plt.plot(x, y)
+                last = gr
+
+            plt.plot(x, y, color='blue' if gr else 'red')
             break
 
     def test(self):

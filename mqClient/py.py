@@ -5,16 +5,19 @@ import time
 import json
 # import dataset
 import CONST
-
+#TODO
 HOST = "iotdevrd.chinacloudapp.cn"
 PORT = 1889
 user = 'hziottest'
 pwd = '123456789'
 
+'''
 HOST = '3.1.2.244'
 PORT = 1889
 user = 'iotadmin'
 pwd = 'iotadmin_2018'
+'''
+
 
 def singleton(cls, *args, **kw):
     instances = {}
