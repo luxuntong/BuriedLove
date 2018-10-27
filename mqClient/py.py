@@ -3,7 +3,7 @@ import paho.mqtt.client as mqtt
 from mqtt import MQTT
 import time
 import json
-import dataset
+# import dataset
 import CONST
 
 HOST = "iotdevrd.chinacloudapp.cn"
@@ -32,7 +32,7 @@ class Mosquito(object):
         self._client.on_connect = self.on_connect
         self._client.on_message = self.on_message
         self._client.connect(HOST, PORT, 60)
-        self._db = dataset.connect('sqlite:///gps.db')
+        # self._db = dataset.connect('sqlite:///gps.db')
         self._browser = browser
         g_mqtt.setBrowser(browser, self)
         self._topic = ''
@@ -54,7 +54,7 @@ class Mosquito(object):
         jData = msg.payload.decode('utf-8')
         print(msg.topic + " " + jData)
         # self.save_to_sqlite(jData)
-        g_mqtt.setInfo(jData)
+        g_mqtt.setInfo(msg.topic, jData)
 
     def _get_current_topic(self):
         # return CONST.topic[self._current_topic_index % len(CONST.topic)]

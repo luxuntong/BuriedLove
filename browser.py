@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 import sys
 # from PyQt5.QtWidgets import QApplication, QWidget
-from PyQt5.QtWidgets import (QWidget, QPushButton, QGridLayout, QComboBox,
-                             QLabel, QVBoxLayout, QApplication)
+from PyQt5.QtWidgets import (QWidget, QPushButton, QGridLayout, QComboBox, QScrollArea,
+                             QCheckBox, QLabel, QVBoxLayout, QApplication)
 from PyQt5.QtCore import QObject, pyqtSlot, QUrl
 # from PyQt5.QtCore import *
 from PyQt5.QtWebChannel import QWebChannel
@@ -47,6 +47,8 @@ class Browser(QWidget):
         self._poss = {}
         self._posStr = str(CONST.RGB[0][0])
         self.initUI()
+        self._downloadMod = True
+        self._downloadIndex = 0
 
     def initBrowser(self):
         view = QWebEngineView()
@@ -119,7 +121,7 @@ class Browser(QWidget):
         return btn
 
     def onGetPointsData(self, points):
-        print('getData:', points)
+        print('getData:', len(points), points)
         self.view.page().runJavaScript(JS_CODE.removeOverlay)
         points = ['new BMap.Point({},{})'.format(gps.longitude, gps.latitude) for gps in points]
         pointsStr = ',\n\t'.join(points)
@@ -128,7 +130,24 @@ class Browser(QWidget):
 
     def register(self):
         print('register:', self._devId)
-        self._mqtt.register(self._devId, 'browser', self.onGetPointsData)
+        self._mqtt.register(self._topic, self._devId, 'browser', self.onGetPointsData)
+        
+    def createScroll(self):
+        self.topFiller = QWidget()
+        self.topFiller.setMinimumSize(200, 100)
+        grid = QGridLayout()
+        self.topFiller.setLayout(grid)
+        for i in range(2):
+            bt = QPushButton('123', self)
+            grid.addWidget(bt, i, 0)
+        scroll = QScrollArea()
+        scroll.setWidget(self.topFiller)
+        scroll.setGeometry(0, 0, 50, 50)
+        scroll.setMinimumSize(50, 50)
+        # scroll.resize(1, 1)
+        self.devGrid = grid
+        self.scroll = scroll
+        return scroll
 
     def initUI(self):
         grid = QGridLayout()
@@ -142,7 +161,7 @@ class Browser(QWidget):
         grid.addWidget(self.view, 3, 0, 3, 4)
         self.setLayout(grid)
         # self.setGeometry(0, 0, 1024, 768)
-        self.setGeometry(1000, 600, 300, 300)
+        self.setGeometry(0, 0, 1024, 768)
         # self.showMinimized()
         self.setWindowTitle('BuriedLove')
         self.show()
@@ -158,6 +177,17 @@ class Browser(QWidget):
 
     def setMqtt(self, mqtt):
         self._mqtt = mqtt
+
+    def mqttAllFull(self):
+        if not self._downloadMod:
+            return
+
+        self._downloadIndex += 1
+        if self._downloadIndex >= len(CONST.topic):
+            return
+
+        self._topic = CONST.topic[self._downloadIndex]
+        self.subScribe()
 
 
 def browserGo():

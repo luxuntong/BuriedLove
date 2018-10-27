@@ -1,13 +1,15 @@
 import dataset
 import time
+import json
 from singleton import singleton
 
 
 @singleton
 class Data(object):
     def __init__(self):
+        print('data init:', id(self))
         self._db = dataset.connect('sqlite:///gps_ckz.db')
-        self._table = self._db['gps']
+        self._table = self._db['gps1']
         self._count = 0
 
     def addData(self, jsonStr):
@@ -24,6 +26,9 @@ class Data(object):
 
     def test(self):
         # self._table.insert({'a': 123, 'b': 333})
+        print('im in test1')
+        for i in range(100):
+            self.addData(str(i))
         print('im in test')
         for data in self.getDatas():
             print(data)

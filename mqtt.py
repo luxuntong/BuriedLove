@@ -42,7 +42,7 @@ class GPSPool(list):
     repList = [('ckzlt_mid', lambda gp: gp.getMidStr()),
                ('ckzlt_points', lambda gp: gp.getPointsStr())]
 
-    def __init__(self, devId):
+    def __init__(self, topic, devId, owner):
         self.devId = devId
         self.keys = set()
         self.minLatitude = 9999
@@ -50,18 +50,30 @@ class GPSPool(list):
         self.maxLatitude = 0
         self.maxLongitude = 0
         self._funcs = {}
+        self._repeat = 0
+        print('will open1')
+        self._fw = open(topic.replace('/', '_') + '.' + devId, 'w')
+        print('open2')
+        self.isFull = False
+        self._owner = owner
 
     def addData(self, data, isWrite=True):
         gps = GPS(data)
         if gps.key in self.keys:
+            self._repeat += 1
+            if self._repeat == 5:
+                print('repeat beyond 5:', self._repeat)
+                self._fw.close()
+                self.isFull = True
+                self._owner.devFull(self.devId)
+            elif self._repeat > 5:
+                print('-' * 30)
             return
 
+        self._fw.write(data + '\n')
         self.keys.add(gps.key)
         heapq.heappush(self, gps)
         self._notify()
-
-        if isWrite:
-            Data().addData(gps.data)
 
     def register(self, name, func):
         if name in self._funcs:
@@ -124,9 +136,11 @@ class MQTT(object):
     def __init__(self, *args, **kwargs):
         self.first = True
         self.GPSPools = {}
-        self._initData()
+        # self._initData()
         self._browser = None
         self._mos = None
+        self._fullSet = set()
+        self._topic = None
 
     def setBrowser(self, browser, mos):
         self._browser = browser
@@ -157,24 +171,38 @@ class MQTT(object):
             jsonStr = data['data']
             self.setInfo(jsonStr)
 
-    def setInfo(self, jsonStr, isWrite=True):
+    def getKey(self, devId):
+        return self._topic + '.' + devId
+
+    def setInfo(self, topic, jsonStr, isWrite=True):
+        self._topic = topic
         devId = self.getDevId(jsonStr)
-        if devId not in self.GPSPools:
-            self.addNewPool(devId)
+        key = self.getKey(devId)
+        if key not in self.GPSPools:
+            self.addNewPool(key, devId)
 
-        self.GPSPools[devId].addData(jsonStr, isWrite)
+        self.GPSPools[key].addData(jsonStr, isWrite)
 
-    def addNewPool(self, devId):
-        self.GPSPools.setdefault(devId, GPSPool(devId))
+    def addNewPool(self, key, devId):
+        self.GPSPools.setdefault(key, GPSPool(self._topic, devId, self))
         self._browser.addDevId(devId)
+
+    def devFull(self, devId):
+        self._fullSet.add(devId)
+        if self.isAllFull():
+            self._browser.mqttAllFull()
+
+    def isAllFull(self):
+        return len(self.GPSPools) == len(self._fullSet)
 
     def generateHtml(self):
         for pool in self.GPSPools.values():
             pool.generateHtml()
 
-    def register(self, devId, name, func):
-        if devId not in self.GPSPools:
-            print('Error: devId not in GPSPools:', devId)
+    def register(self, topic, devId, name, func):
+        key = topic + '.' + devId
+        if key not in self.GPSPools:
+            print('Error: devId not in GPSPools:', key)
             return
 
-        self.GPSPools[devId].register(name, func)
+        self.GPSPools[key].register(name, func)
