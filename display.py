@@ -35,7 +35,7 @@ class AnaManager(object):
         gaoxia = self.topics['GPSLocation_test7_2']
         #gaoshang.pltTest(plt)
         #gaoxia.pltTest(plt)
-        topicGP = self.getTopicKey(4)
+        topicGP = self.getTopicKey(1)
         topicGP.pltTest(plt)
 
     def getTopicKey(self, index):
@@ -54,9 +54,10 @@ class AnaManager(object):
         print('$' * 30)
         gaoxia.anaAll(CONST.dataType.gaojia)
         print(self.topics.keys())
-        for index in range(5):
+        for index in range(12):
             topicGP = self.getTopicKey(index)
             print('&' * 30)
+            print(topicGP._topic)
             topicGP.anaAll(CONST.dataType.xingwei)
 
 
@@ -106,15 +107,21 @@ class Ana(object):
             return CONST.gaojia.notknow
 
     def anaAll(self, dataType):
+        rets = {}
         if dataType == CONST.dataType.gaojia:
             for dev in self.GPSPools.values():
-                print(self.gaojia(dev))
+                ret = self.gaojia(dev)
+                print(ret)
+                rets[dev.devId] = ret
+
         elif dataType == CONST.dataType.xingwei:
             for dev in self.GPSPools.values():
-                try:
-                    print(self.rgbAna(dev))
-                except IndexError:
-                    print("无法判断该设备情况", dev.devId)
+                print(1)
+                ret = self.rgbAna(dev)
+                print(ret)
+                rets[dev.devId] = ret
+
+        return rets
 
     def gaojia(self, dev):
         data = dev.getSortData()
@@ -152,6 +159,7 @@ class Ana(object):
             y = [gps.latitude for gps in data]
             plt.plot(x, y, color=colors[sorted_names[index]])
             plt.scatter(120.191689, 30.189142, color='blue')
+            break
             '''
             start = data[0]
             rgbPos = CONST.RGB[0][0]
@@ -166,14 +174,15 @@ class Ana(object):
     def test(self):
         for gp in self.GPSPools.values():
             print('devId:{}, avSpeed:{}, avHigh:{}'.format(gp.devId, gp.getAverageSpeed(), gp.getAverageHigh()))
+
     # ---------------------------------------
     def rgbAna(self, dev):
         topic = self._topic.replace('_', '/')
         index = CONST.topic.index(topic)
         rgb = CONST.RGB[index]
-        print(CONST.ConstBehavior[recog.behaviorRecog(dev.getSortData(), rgb)])
+        # print(CONST.ConstBehavior[recog.behaviorRecog(dev.getSortData(), rgb)])
         ckz = recCkz.RecCkz(dev, index)
-        ckz.calc()
+        return ckz.calc()
 
 
 if __name__ == '__main__':

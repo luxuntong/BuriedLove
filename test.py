@@ -12,3 +12,7 @@ print(len(bb))
 tm = time.strptime("2018/10/08 11:17:33","%Y/%m/%d %H:%M:%S")
 print(tm)
 print(time.mktime(tm))
+print(-120 //10)
+aa = [1, 2, 3, 4]
+aa.reverse()
+print(aa)
