@@ -202,6 +202,9 @@ class Browser(QWidget):
             index = CONST.topic.index(self._topic)
             ana = Ana(self._topic, topicData)
             dataType = CONST.getDataType(index)
+            if dataType == CONST.dataType.display:
+                return
+
             rets = ana.anaAll(dataType)
             print(rets)
             for devId, ret in rets.items():
@@ -216,14 +219,14 @@ class Browser(QWidget):
     def getCurrTopicInfo(self):
         strRet = 'topic:{}\n'.format(self._topic)
         devs = self._topics[self._topic]
-        devs = [key + (': finished' if right else ': receiving') for key, right in devs.items()]
+        devs = [key + ': ' + right for key, right in devs.items()]
         devData = '\n'.join(devs)
         strRet += devData
         return strRet
 
     def addDevId(self, devId):
         self._topics.setdefault(self._topic, {})
-        self._topics[self._topic][devId] = False
+        self._topics[self._topic][devId] = 'receiving'
         self.devComb.addItem(devId)
         if not self._devId:
             self._devId = devId
@@ -235,7 +238,15 @@ class Browser(QWidget):
         self._mqtt = mqtt
 
     def devFull(self, devId):
-        self._topics[self._topic][devId] = True
+        self._topics[self._topic][devId] = 'finished'
+
+        topicData = self._mqtt.getTopicDict(self._topic)
+        index = CONST.topic.index(self._topic)
+        ana = Ana(self._topic, topicData)
+        dataType = CONST.getDataType(index)
+        if dataType != CONST.dataType.display:
+            self._topics[self._topic][devId] = ana.anaOne(devId, dataType)
+
         self._logLbl.setText(self.getCurrTopicInfo())
 
     def mqttAllFull(self):

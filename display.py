@@ -56,6 +56,8 @@ class AnaManager(object):
         print(self.topics.keys())
         for index in range(12):
             continue
+            if index != 5:
+                continue
 
             topicGP = self.getTopicKey(index)
             print('&' * 30)
@@ -64,6 +66,8 @@ class AnaManager(object):
 
         testG = self.topics['GPSLocation_3']
         testG.anaAll(CONST.dataType.xingwei)
+        for dev in testG.GPSPools.values():
+            dev.generateHtml()
 
 
 
@@ -111,6 +115,15 @@ class Ana(object):
         else:
             return CONST.gaojia.notknow
 
+    def anaOne(self, devId, dataType):
+        dev = self.GPSPools.get(devId)
+        if dataType == CONST.dataType.xingwei:
+            ret = self.rgbAna(dev)
+            return CONST.ConstBehavior[ret]
+        elif dataType == CONST.dataType.gaojia:
+            ret = self.gaojia(dev)
+            return CONST.gaojiaResult[ret]
+
     def anaAll(self, dataType):
         rets = {}
         if dataType == CONST.dataType.gaojia:
@@ -155,6 +168,7 @@ class Ana(object):
             key = func(gps)
             key = keyFunc(key)
             hashInfo[key] = hashInfo.get(key, 0) + 1
+
 
         maxRate = max(hashInfo.values())
         minRate = min(hashInfo.values())
@@ -215,14 +229,18 @@ class Ana(object):
         topic = self._topic.replace('_', '/')
         index = CONST.topic.index(topic)
         rgb = CONST.RGB[index]
-        ret = 1
+        liu = 1
+
         try:
-            ret = recog.behaviorRecog(dev.getSortData(), rgb)
+            liu = recog.behaviorRecog(dev.getSortData(), rgb)
+            print(CONST.ConstBehavior[liu])
         except IndexError:
             print("Error on ", index)
-        # ckz = recCkz.RecCkz(dev, index)
-        # return ckz.calc()
-        return ret
+
+        # return liu
+        ckz = recCkz.RecCkz(dev, index)
+        return ckz.calc()
+
 
 
 if __name__ == '__main__':

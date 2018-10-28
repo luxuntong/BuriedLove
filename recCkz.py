@@ -35,6 +35,7 @@ class RecCkz(object):
         hashInfo = self.getHashInfo(data, lambda gps: gps.rAngle, self.anaFunc)
         print(hashInfo)
         cutList = self.cut(hashInfo)
+        print(cutList)
         if len(cutList) == 1:
             return CONST.BHType.hongdeng
 
@@ -43,10 +44,10 @@ class RecCkz(object):
 
         if len(cutList) != 2:
             log('ERROR: cutList:{}, {}, {}'.format(cutList, self._dev._topic, self._dev.devId))
-            return -1
+            return CONST.BHType.lvzhi
 
         finalAngleAver = self.calcAver(cutList[1])
-        if finalAngleAver > 330 or finalAngleAver < 30:
+        if finalAngleAver > 310 or finalAngleAver < 30:
             cutList.reverse()
             finalAngleAver = self.calcAver(cutList[1])
 
@@ -54,7 +55,7 @@ class RecCkz(object):
         self.getDir(finalAngleAver)
         lastFirst, firstEnd = self.getMidData(data, cutList)
 
-        ret = self._calcRGB(lastFirst.timestamp, firstEnd.timestamp)
+        ret = self._calcRGB(data, lastFirst.timestamp, firstEnd.timestamp)
         if self.dir == CONST.DIR.right:
             if ret:
                 return CONST.BHType.lvyou
@@ -84,13 +85,20 @@ class RecCkz(object):
         t = t % self._wholeDur
         return timestamp - t + self._gDur
 
-    def _calcRGB(self, st, en):
-        if not self.isTimeG(st):
-            return False
+    def _calcRGB(self, data, st, en):
+        for gps in data:
+            if st < gps.timestamp < en:
+                anaKey = self.anaFunc(gps.rAngle)
+                if self.dir == CONST.DIR.forward:
+                    if anaKey >= 30 or anaKey <= 20:
+                        continue
+                elif self.dir == CONST.DIR.left:
+                    pass
+                    #if anaKey < 2 or anaKey > 8:
+                    #    continue
 
-        nextR = self.getNextR(st)
-        if nextR < en:
-            return False
+                if not self.isTimeG(gps.timestamp):
+                    return False
 
         return True
 
@@ -154,7 +162,7 @@ class RecCkz(object):
         afterCut = []
         piece = []
         lastAdd = -1
-        for i in range(0, 36):
+        for i in range(0, 37):
             count = hashInfo.get(i, 0)
             if not count:
                 continue

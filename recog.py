@@ -202,8 +202,8 @@ def getNearLedGpsList(gpsList, led_loc, nearDis):
 
 
 def getCorrectedCord(long, lat):
-    corList = cc.wgs84_to_bd09(long ,lat )
-    return corList[0] + 0.01078, corList[1] + 0.0003
+    corList = cc.wgs84_to_bd09(long, lat)
+    return corList[0], corList[1]
 
 
 def getDistance(cord1, cord2):

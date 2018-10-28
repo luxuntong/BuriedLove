@@ -44,7 +44,7 @@ class GPS(object):
 
 # 单个设备的所有GPS信息池
 class GPSPool(list):
-    readFile = 'test.html'
+    readFile = 'html\\test.html'
     repList = [('ckzlt_mid', lambda gp: gp.getMidStr()),
                ('ckzlt_points', lambda gp: gp.getPointsStr())]
 
@@ -85,7 +85,7 @@ class GPSPool(list):
         self.keys.add(gps.key)
         heapq.heappush(self, gps)
 
-        if len(self) % 10 == 0:
+        if len(self) % 5 == 0:
             self._notify()
 
     def register(self, name, func):
@@ -158,7 +158,7 @@ class GPSPool(list):
             data = fr.read()
             for rep, func in self.repList:
                 data = data.replace(rep, func(self))
-
+            print('self:', self.devId + '.html')
             fw.write(data)
 
 

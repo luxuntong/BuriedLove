@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*-
 import time
 
-topic = ['GPSLocation/test1/1',
+
+isTest = False
+topic1 = ['GPSLocation/test1/1',
          'GPSLocation/test1/2',
          'GPSLocation/test2/1',
          'GPSLocation/test2/2',
@@ -17,7 +19,7 @@ topic = ['GPSLocation/test1/1',
          'GPSLocation/test7/2',
          'GPSLocation/test8']
 
-topic1 = ['GPSLocation/1',
+topic2 = ['GPSLocation/1',
           'GPSLocation/2',
           'GPSLocation/3',
           'GPSLocation/4',
@@ -27,11 +29,19 @@ topic1 = ['GPSLocation/1',
           'GPSLocation/8',
           'GPSLocation/9',
           'GPSLocation/10']
+
+if isTest:
+    XINGWEI = 12
+    GAOJIA = 14
+else:
+    XINGWEI = 6
+    GAOJIA = 8
+
 #TODO
 def getDataType(index):
-    if index < 6:
+    if index < XINGWEI:
         return dataType.xingwei
-    elif index < 8:
+    elif index < GAOJIA:
         return dataType.gaojia
     else:
         return dataType.display
@@ -47,16 +57,16 @@ def getTimeStamp(timeStr):
     tm = time.strptime(timeStr, "%Y/%m/%d %H:%M:%S")
     return int(time.mktime(tm))
 
-RGB = [((120.191689, 30.189142), getTimeStamp('2018/10/20 09:53:24'), 82, 38),#1
-       ((120.191689, 30.189142), getTimeStamp('2018/10/20 09:53:24'), 82, 38),#2
-       ((120.191689, 30.189142), getTimeStamp('2018/10/20 09:53:24'), 34, 86),#3
-       ((120.191689, 30.189142), getTimeStamp('2018/10/20 09:53:24'), 34, 86),#4
-       ((120.191689, 30.189142), getTimeStamp('2018/10/20 09:53:24'), 34, 86),#5
-       ((120.191689, 30.189142), getTimeStamp('2018/10/20 09:52:02'), 34, 86),#6
-       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#7
-       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#8
-       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#9
-       ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#10
+RGB2 = [((120.202608, 30.189203), getTimeStamp('2018/10/20 09:52:40'), 82, 38),#1
+       ((120.202608, 30.189203), getTimeStamp('2018/10/20 09:52:40'), 82, 38),#2
+       ((120.202608, 30.189203), getTimeStamp('2018/10/20 09:52:40'), 82, 38),#3
+       ((120.202608, 30.189203), getTimeStamp('2018/10/20 09:52:40'), 82, 38),#4
+       ((120.202608, 30.189203), getTimeStamp('2018/10/20 09:52:40'), 82, 38),#5
+       ((120.202608, 30.189203), getTimeStamp('2018/10/20 09:52:02'), 38, 82),#6
+       ((120.202608, 30.189203), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#7
+       ((120.202608, 30.189203), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#8
+       ((120.202608, 30.189203), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#9
+       ((120.202608, 30.189203), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#10
        ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#
        ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#
        ((120.191689, 30.189142), getTimeStamp('2018/10/08 11:17:33'), 34, 86),#
@@ -156,3 +166,10 @@ class dataType(object):
     xingwei = 0
     gaojia = 1
     display = 2
+
+if isTest:
+    topic = topic1
+    RGB = RGB1
+else:
+    topic = topic2
+    RGB = RGB2

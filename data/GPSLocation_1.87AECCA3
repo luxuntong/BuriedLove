@@ -1,5 +1,3 @@
-{"devId":"87AECCA3","timestamp":1540004667,"latitude":30.189698333333332,"longitude":120.20237999999999,"satellite":15,"hdop":0.83,"altitude":11.0,"speed":0.0,"direction":273.29}
-{"devId":"87AECCA3","timestamp":1540004669,"latitude":30.189643333333333,"longitude":120.20245333333332,"satellite":16,"hdop":0.78,"altitude":11.7,"speed":0.0,"direction":303.51}
 {"devId":"87AECCA3","timestamp":1540004672,"latitude":30.189641666666663,"longitude":120.20245833333333,"satellite":16,"hdop":0.78,"altitude":13.0,"speed":0.0,"direction":60.61}
 {"devId":"87AECCA3","timestamp":1540004674,"latitude":30.189641666666663,"longitude":120.20245833333333,"satellite":15,"hdop":0.82,"altitude":10.9,"speed":0.0,"direction":60.61}
 {"devId":"87AECCA3","timestamp":1540004677,"latitude":30.189641666666663,"longitude":120.20245833333333,"satellite":15,"hdop":0.82,"altitude":10.2,"speed":0.0,"direction":60.61}
@@ -44,3 +42,18 @@
 {"devId":"87AECCA3","timestamp":1540004782,"latitude":30.189025,"longitude":120.202288333333,"satellite":17,"hdop":0.69,"altitude":11.2,"speed":18.71,"direction":179.45}
 {"devId":"87AECCA3","timestamp":1540004785,"latitude":30.18889,"longitude":120.20248166666667,"satellite":17,"hdop":0.69,"altitude":11.7,"speed":18.19,"direction":186.88}
 {"devId":"87AECCA3","timestamp":1540004787,"latitude":30.188805000000002,"longitude":120.20247499999999,"satellite":17,"hdop":0.69,"altitude":12.7,"speed":16.91,"direction":187.54}
+{"devId":"87AECCA3","timestamp":1540004792,"latitude":30.188643333333335,"longitude":120.20247333333333,"satellite":17,"hdop":0.69,"altitude":10.8,"speed":4.37,"direction":209.21}
+{"devId":"87AECCA3","timestamp":1540004794,"latitude":30.188644999999998,"longitude":120.20246833333334,"satellite":16,"hdop":0.72,"altitude":12.3,"speed":1.7,"direction":305.49}
+{"devId":"87AECCA3","timestamp":1540004797,"latitude":30.188643333333335,"longitude":120.20246999999999,"satellite":16,"hdop":0.72,"altitude":13.0,"speed":0.0,"direction":213.03}
+{"devId":"87AECCA3","timestamp":1540004799,"latitude":30.188643333333335,"longitude":120.20246999999999,"satellite":16,"hdop":0.74,"altitude":13.5,"speed":0.0,"direction":213.03}
+{"devId":"87AECCA3","timestamp":1540004801,"latitude":30.188643333333335,"longitude":120.20227,"satellite":16,"hdop":0.72,"altitude":12.8,"speed":0.0,"direction":213.03}
+{"devId":"87AECCA3","timestamp":1540004804,"latitude":30.188656666666663,"longitude":120.20244833333332,"satellite":17,"hdop":0.69,"altitude":10.9,"speed":0.0,"direction":345.46}
+{"devId":"87AECCA3","timestamp":1540004806,"latitude":30.188665,"longitude":120.20244666666667,"satellite":17,"hdop":0.68,"altitude":10.6,"speed":0.0,"direction":17.82}
+{"devId":"87AECCA3","timestamp":1540004809,"latitude":30.188689999999998,"longitude":120.20245333333332,"satellite":17,"hdop":0.69,"altitude":13.5,"speed":0.0,"direction":0.16}
+{"devId":"87AECCA3","timestamp":1540004813,"latitude":30.188704999999995,"longitude":120.20245333333332,"satellite":17,"hdop":0.68,"altitude":10.8,"speed":0.0,"direction":322.47}
+{"devId":"87AECCA3","timestamp":1540004816,"latitude":30.188704999999995,"longitude":120.20245333333332,"satellite":17,"hdop":0.68,"altitude":13.4,"speed":0.0,"direction":322.47}
+{"devId":"87AECCA3","timestamp":1540004818,"latitude":30.188704999999995,"longitude":120.20245333333332,"satellite":17,"hdop":0.68,"altitude":10.4,"speed":0.0,"direction":322.47}
+{"devId":"87AECCA3","timestamp":1540004821,"latitude":30.188704999999995,"longitude":120.20245333333332,"satellite":17,"hdop":0.69,"altitude":10.1,"speed":0.0,"direction":322.47}
+{"devId":"87AECCA3","timestamp":1540004823,"latitude":30.188704999999995,"longitude":120.20245333333332,"satellite":17,"hdop":0.68,"altitude":11.0,"speed":0.0,"direction":322.47}
+{"devId":"87AECCA3","timestamp":1540004667,"latitude":30.189698333333332,"longitude":120.20237999999999,"satellite":15,"hdop":0.83,"altitude":11.0,"speed":0.0,"direction":273.29}
+{"devId":"87AECCA3","timestamp":1540004669,"latitude":30.189643333333333,"longitude":120.20245333333332,"satellite":16,"hdop":0.78,"altitude":11.7,"speed":0.0,"direction":303.51}
